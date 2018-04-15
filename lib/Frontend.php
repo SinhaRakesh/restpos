@@ -36,8 +36,10 @@ class Frontend extends ApiFrontend {
         $m->addItem('Logout','logout');
 
         $this->addLayout('UserMenu');
-
-
+        
+        // set current_date for back date entry system
+        $this->today = date('Y-m-d',strtotime($this->recall('current_date',date('Y-m-d'))));
+        $this->now = date('Y-m-d H:i:s',strtotime($this->recall('current_date',date('Y-m-d H:i:s'))));
     }
 
 }
