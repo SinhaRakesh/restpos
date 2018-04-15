@@ -13,6 +13,7 @@ class Model_RoomTable extends Model_Table{
 		$this->addField('shape')->enum(['Circle','Square','Rectangle','Oval','Other']);
 		$this->addField('member')->type('int');
 		
+		$this->addField('is_active')->type('boolean')->defaultValue(true);
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}
 }

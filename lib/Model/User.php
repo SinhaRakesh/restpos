@@ -14,6 +14,7 @@ class Model_User extends Model_Table{
 
 		$this->hasOne('Role','role_id');
 
+		$this->addField('is_active')->type('boolean')->defaultValue(false);
 		$this->addField('is_super')->type('boolean')->defaultValue(false)->system(true);
 		// $this->addHook('beforeSave',$this);
 		$this->add('dynamic_model/Controller_AutoCreator');

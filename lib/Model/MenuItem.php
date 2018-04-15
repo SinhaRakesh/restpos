@@ -11,6 +11,7 @@ class Model_MenuItem extends Model_Table{
 		$this->addField('code')->type('number');
 		$this->addField('price')->type('number')->hint('unit wise');
 		$this->addField('unit');
+		$this->addField('is_active')->type('boolean')->defaultValue(true);
 		
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}

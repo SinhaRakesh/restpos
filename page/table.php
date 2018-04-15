@@ -8,18 +8,18 @@ class page_table extends Page {
 	function init(){
 		parent::init();
 
-		$m = $this->add('Model_Room');
-		$c = $this->add('CRUD');
-		$c->setModel($m);
+		$model = $this->add('Model_Room')
+				->addCondition('is_active',true);
+		$tabs = $this->add('Tabs');
+		foreach ($model as $m){
+        	$t = $tabs->addTab($m['name']);
 
-		$c->grid->add('VirtualPage')
-		->addColumn('Table','Room Table')
-		->set(function($page){
-			$id = $_GET[$page->short_name.'_id'];
-			$m = $page->add('Model_RoomTable');
-			$m->addCondition('room_id',$id);
-			$crud = $page->add('CRUD');
-			$crud->setModel($m);
-		});
+        	$item = $this->add('Model_RoomTable');
+        	$item->addCondition('room_id',$m->id);
+        	$item->addCondition('is_active',true);
+        	
+        	$t->add('Grid')->setModel($item);
+		}
+
 	}
 }

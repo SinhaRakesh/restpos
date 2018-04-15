@@ -32,12 +32,12 @@ class Frontend extends ApiFrontend {
         $m->addItem('Menu','menu');
         $m->addItem('Staff','staff');
         $m->addItem('Reports','report');
-        $m->addItem('Settings','setting');
+        $m->addItem('Master','master');
         $m->addItem('Logout','logout');
 
         $this->addLayout('UserMenu');
 
-        
+
     }
 
 }
