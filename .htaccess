@@ -1,0 +1,4 @@
+RewriteEngine On
+#RewriteRule ^sitemap.xml$ index.php?page=xepan_cms_sitemap [L]
+#RewriteRule ^robots.txt$ index.php?page=xepan_cms_robottxt [L]
+RewriteRule ^[^\.]*$            index.php   [L]
