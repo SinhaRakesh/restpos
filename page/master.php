@@ -8,12 +8,13 @@ class page_master extends Page {
 	function page_index(){
 		// parent::init();
 
-
 		$tab = $this->add('Tabs');
 		$tab->addTabUrl('./company','Company');
 		$tab->addTabUrl('./table','Table');
         $tab->addTabUrl('./menu','Menu');
         $tab->addTabUrl('./staff','Staff');
+        $tab->addTabUrl('./customer','Customer');
+        $tab->addTabUrl('./tax','Tax');
 	}
 
 
@@ -66,5 +67,16 @@ class page_master extends Page {
 		$c->setModel($m);
 	}
 
+	function page_tax(){
+		$m = $this->add('Model_Tax');
+		$c = $this->add('CRUD');
+		$c->setModel($m);
+	}
+
+	function page_customer(){
+		$m = $this->add('Model_Customer');
+		$c = $this->add('CRUD');
+		$c->setModel($m);
+	}
 
 }

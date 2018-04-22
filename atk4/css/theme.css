@@ -4763,3 +4763,12 @@ a.atk-swatch-blue:not(.atk-text-inherit):hover,
 .atk-swatch-blue-text {
   color: #0095ff;
 }
+
+textarea{
+  height: 80px !important;
+  min-height:80px !important;
+}
+
+.logo-image img{
+  width:80px !important;
+}

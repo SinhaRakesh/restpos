@@ -11,7 +11,8 @@ class Model_MenuItem extends Model_Table{
 		$this->addField('code')->type('number');
 		$this->addField('price')->type('number')->hint('unit wise');
 		$this->addField('unit');
-		$this->addField('is_tax_applicable')->type('boolean')->defaultValue(true);
+		// $this->addField('is_tax_applicable')->type('boolean')->defaultValue(true);
+		$this->hasOne('Tax','tax_id');
 		// $this->addField('is_tax_applicable')->type('boolean')->defaultValue(true);
 		
 		$this->addField('is_active')->type('boolean')->defaultValue(true);

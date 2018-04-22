@@ -19,7 +19,13 @@ class Model_Order extends Model_Table{
 		// $this->addExpresion('created_time_only','TIME(created_at)');
 		$this->addField('updated_at')->type('datetime')->set($this->app->now)->system(true);
 
-		$this->addField('status')->enum(['Draft','Paid','Void']);
+		$this->addField('status')->enum(['Running','Paid','Void'])->defaultValue('Running');
+
+		$this->hasOne('User','created_by_id')->defaultValue(@$this->app->auth->model->id);
+		$this->hasOne('User','paid_by_id')->defaultValue(@$this->app->auth->model->id);
+		$this->hasOne('User','void_by_id')->defaultValue(@$this->app->auth->model->id);
+		$this->addField('paid_at')->type('datetime')->system(true);
+		$this->addField('void_at')->type('datetime')->system(true);
 
 		$this->addExpression('amount')->set(function($m,$q){
 			$details = $m->refSQL('OrderDetail');
@@ -36,5 +42,12 @@ class Model_Order extends Model_Table{
 		if(!$this['created_at']){
 			$this['created_at'] = $this->app->now;
 		}
+		if($this['status'] == "Paid"){
+			$this['paid_at'] = $this->app->now;
+		}
+		if($this['status'] == "Void"){
+			$this['void_at'] = $this->app->now;
+		}
 	}
+
 }

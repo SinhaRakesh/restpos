@@ -1,16 +1,15 @@
 <?php
 
-class Model_Room extends Model_Table{
-	public $table = "room";
+class Model_Tax extends Model_Table{
+	public $table = "tax";
 
 	function init(){
 		parent::init();
-		
-		$this->addField('name');
 
+		$this->addField('name')->mandatory(true);
+		$this->addField('tax_percentage')->type('number');
 		$this->addField('is_active')->type('boolean')->defaultValue(true);
-			
-		$this->hasMany('RoomTable','room_id');
+
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}
 }

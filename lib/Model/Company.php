@@ -32,10 +32,15 @@ class Model_Company extends Model_Table{
 		$this->addField('tax_value')->hint('if fixed amount then 10 else in percentage 2%');
 		
 		$this->addHook('beforeSave',$this);
+		$this->addHook('afterSave',$this);
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}
 
 	function beforeSave(){
 		if($this['name']=='admin') $this['is_super']=true;
+	}
+
+	function afterSave(){
+        $this->app->memorize('company',$this->data);
 	}
 }

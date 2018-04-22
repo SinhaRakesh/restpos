@@ -20,11 +20,11 @@ class Frontend extends ApiFrontend {
         $this->now = date('Y-m-d H:i:s',strtotime($this->recall('current_date',date('Y-m-d H:i:s'))));
        
         // If you wish to restrict access to your pages, use BasicAuth class
-        // $auth=$this->add('BasicAuth');
-        // $auth->setModel('User','username','password');
+        $auth=$this->add('BasicAuth');
+        $auth->setModel('User','username','password');
             // ->allow('demo','demo')
             // use check() and allowPage for white-list based auth checking
-        // $auth->check();
+        $auth->check();
       
         $m=$this->add('Menu',null,'Menu');
         $m->addItem('Order','index');
@@ -40,6 +40,11 @@ class Frontend extends ApiFrontend {
         // set current_date for back date entry system
         $this->today = date('Y-m-d',strtotime($this->recall('current_date',date('Y-m-d'))));
         $this->now = date('Y-m-d H:i:s',strtotime($this->recall('current_date',date('Y-m-d H:i:s'))));
+        
+        if(!($this->company = $this->app->recall('company',false))){
+            $this->company = $this->add('Model_Company')->tryLoadAny()->data;
+            $this->app->memorize('company',$this->company);
+        }
     }
 
 }

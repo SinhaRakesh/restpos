@@ -17,7 +17,13 @@ class Model_User extends Model_Table{
 		$this->addField('is_active')->type('boolean')->defaultValue(false);
 		$this->addField('is_super')->type('boolean')->defaultValue(false)->system(true);
 		// $this->addHook('beforeSave',$this);
+		$this->addHook('beforeDelete',$this);
 		$this->add('dynamic_model/Controller_AutoCreator');
+	}
+
+	function beforeDelete(){
+		if($this['is_super'])
+			throw new \Exception("cannot delete admin user");
 	}
 
 	function beforeSave(){

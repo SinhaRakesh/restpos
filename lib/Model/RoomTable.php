@@ -14,6 +14,16 @@ class Model_RoomTable extends Model_Table{
 		$this->addField('member')->type('int');
 		
 		$this->addField('is_active')->type('boolean')->defaultValue(true);
+
 		$this->add('dynamic_model/Controller_AutoCreator');
+	}
+
+	function getOrder(){
+		$order = $this->add('Model_Order');
+		$order->addCondition('table_id',$this->id);
+		$order->addCondition('status','Running');
+		$order->setOrder('id','desc');
+		$order->setLimit(1);
+		return $order;
 	}
 }
