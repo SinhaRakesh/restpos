@@ -10,7 +10,7 @@ class Model_RoomTable extends Model_Table{
 
 		$this->addField('name');
 		$this->addField('size')->enum(['Small','Medium','Large','Other']);
-		$this->addField('shape')->enum(['Circle','Square','Rectangle','Oval','Other']);
+		$this->addField('shape')->enum(['Circle','Square','Rectangle','Oval']);
 		$this->addField('member')->type('int');
 		
 		$this->addField('is_active')->type('boolean')->defaultValue(true);
