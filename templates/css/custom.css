@@ -104,5 +104,10 @@ body{
 	border-radius: 50%;	
 }
 
-
-
+h4.room-heading {
+	font-weight: bold;
+}
+.room-info-section{
+	margin-bottom: 5px;
+	padding: 3px;
+}

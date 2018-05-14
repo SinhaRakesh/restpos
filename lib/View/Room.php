@@ -11,6 +11,7 @@ class View_Room extends \CompleteLister {
 				->addCondition('room_id',$this->room_model->id)
 				;
 		$this->setModel($tables);
+		$this->template->trySet('room_name',$this->room_model['name']);
 	}
 
 	function defaultTemplate(){
