@@ -1,0 +1,108 @@
+/*blue color: #1e8bc9*/
+
+body{
+	background:#f9f9f9;
+}
+
+.menubar{
+	background:linear-gradient(to bottom, #03a9f4 0%, #2980b9 100%);
+	background:-ms-linear-gradient(top, #03a9f4 0%, #2980b9 100%);
+	background:-webkit-linear-gradient(top, #03a9f4 0%, #2980b9 100%);
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #03a9f4), color-stop(100%, #2980b9));
+	background:-moz-linear-gradient(top, #03a9f4 0%, #2980b9 100%);	
+	box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.1);
+	padding: 0px;
+}
+
+.menubar .logo-image img{
+	width:40px !important;
+}
+
+.menubar .atk-menu-horizontal li > a{
+	background: transparent;
+}
+
+.menubar li > a.active{
+	background-color: #2c3e50;
+}
+
+/*tabs css*/
+.flattabs .atk-tabs > ul.ui-tabs-nav{
+	background:white; 
+}
+	
+.flattabs .atk-tabs ul,
+.flattabs .atk-tabs li, 
+.flattabs .atk-tabs li.ui-state-active{
+	border:0px;
+	border-radius: 0px !important;
+}
+.flattabs .ui-tabs .ui-tabs-nav.ui-widget-header{
+	border-bottom: 0px;
+}
+
+.flattabs .atk-tabs li:not(:last-child){
+	border-right:2px solid #f3f3f3 !important;
+}
+
+.flattabs .atk-tabs .ui-tabs-active.ui-state-active{
+	background-color: #1e8bc9 !important;
+}
+.flattabs .atk-tabs .ui-tabs-active.ui-state-active a{
+	border-bottom: 2px solid #1e8bc9;
+	color: white;
+}
+
+.flattabs .ui-tabs-panel{
+	padding-left:10px !important;
+	padding-right:10px !important;
+}
+/*end of tab css*/
+
+
+.room-container{
+	margin: 0 auto 0 auto ;
+	width:70%;
+	min-height: 500px;
+	box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.5);
+	padding: 10px;
+	background-image: url("../images/room-background-2.jpg");
+	background-size: 100%;
+	background-width: 100%;
+}
+
+.room-container .table-container{
+	height:120px;
+	background: rgba(256,256,256,0.3);
+	text-align: center;
+}
+
+.room-table{
+	margin:5px;
+	border: 2px solid gray;
+	background: white;
+	width:80%;
+}
+
+.room-table.shape-Circle{
+	width:90px;
+	height: 90px;
+	border-radius: 50%;
+}
+
+.room-table.shape-Square{
+	height: 90px;
+}
+
+.room-table.shape-Rectangle{
+	height: 50px;
+}
+
+.room-table.shape-Oval{
+	width: 75px;
+	height: 90px;
+	border-radius: 50%;	
+}
+
+
+

@@ -8,7 +8,8 @@ class page_master extends Page {
 	function page_index(){
 		// parent::init();
 
-		$tab = $this->add('Tabs');
+		$ft = $this->add('View')->addClass('flattabs');
+		$tab = $ft->add('Tabs');
 		$tab->addTabUrl('./company','Company');
 		$tab->addTabUrl('./table','Table');
         $tab->addTabUrl('./menu','Menu');

@@ -10,7 +10,8 @@ class page_menu extends Page {
 		
 		$category_model = $this->add('Model_MenuCategory')
 							->addCondition('is_active',true);
-		$tabs = $this->add('Tabs');
+		$ft = $this->add('View')->addClass('flattabs');
+		$tabs = $ft->add('Tabs');
 		foreach ($category_model as $m){
         	$t = $tabs->addTab($m['name']);
 
