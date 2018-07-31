@@ -26,6 +26,10 @@ class Frontend extends ApiFrontend {
         $auth->setModel('User','username','password');
             // ->allow('demo','demo')
             // use check() and allowPage for white-list based auth checking
+
+        if(!$this->app->auth->model->id)
+            $this->add('Layout_Admin');
+        
         $auth->check();
         
         $m = $this->add('Menu',null,'Menu');

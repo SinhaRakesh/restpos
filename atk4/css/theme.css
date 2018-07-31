@@ -4772,3 +4772,13 @@ textarea{
 .logo-image img{
   width:80px !important;
 }
+
+
+button:focus{
+  border-color: #0095ff !important;
+  -webkit-box-shadow: 0 0 3px rgba(0, 149, 255, 0.7), 0 0 10px rgba(0, 149, 255, 0.3);
+  -moz-box-shadow: 0 0 3px rgba(0, 149, 255, 0.7), 0 0 10px rgba(0, 149, 255, 0.3);
+  box-shadow: 0 0 3px rgba(0, 149, 255, 0.7), 0 0 10px rgba(0, 149, 255, 0.3);
+  outline: none;
+  transform: scale(1.1);
+}

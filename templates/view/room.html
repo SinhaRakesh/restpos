@@ -5,11 +5,14 @@
 		<div class="atk-row" style="margin: 0px;">
 		{rows}
 		{row}
-			<div class="atk-col-3 table-container">
-				<div class="room-table shape-{$shape}">
-					<p>{$name}</p>
-				</div>
+		<div class="atk-col-3 table-container" data-tableid={$id}>
+			<a href="{$order_detail_url}" class="{$table_class}" data-tableid={$id}>
+			<div class="room-table shape-{$shape}" data-tableid={$id}>
+				<p>{$name}<br/>Order: {$running_order_id}
+				</p>
 			</div>
+			</a>
+		</div>
 		{/}
 		{/}
 		</div>

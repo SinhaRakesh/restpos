@@ -1,4 +1,5 @@
 /*blue color: #1e8bc9*/
+/*yellow color: #ffcc00*/
 
 body{
 	background:#f9f9f9;
@@ -110,4 +111,12 @@ h4.room-heading {
 .room-info-section{
 	margin-bottom: 5px;
 	padding: 3px;
+}
+
+.has-running-order{
+	background-color: #ffcc00;
+	color: white;
+}
+.has-no-running-order{
+
 }

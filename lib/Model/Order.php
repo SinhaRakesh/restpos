@@ -12,7 +12,7 @@ class Model_Order extends Model_Table{
 		$this->hasOne('Room','room_id');
 		$this->hasOne('RoomTable','table_id');
 
-		$this->addField('name')->system(true);
+		$this->addField('name');
 		$this->addField('created_at')->type('datetime')->system(true);
 
 		$this->addExpression('created_date_only','DATE(created_at)');

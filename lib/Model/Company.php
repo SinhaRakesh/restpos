@@ -16,20 +16,20 @@ class Model_Company extends Model_Table{
 		$this->addField('contact_no')->hint('comma (,) seperated multiple values');
 		$this->addField('address');
 		$this->addField('landmark');
-		$this->addField('city');
-		$this->addField('state');
 		$this->addField('country');
-		$this->addField('logo');
+		$this->addField('state');
+		$this->addField('city');
+		$this->add('filestore\Field_File','logo_id');
 
 		$this->addField('start_time');
 		$this->addField('end_time');
 		$this->addField('currency');
 		$this->addField('payment_type')->type('text')->hint('comma seperated multiple values');
-
+		
 		$this->addField('service_charge_name');
 		$this->addField('service_charge')->hint('if fixed amount 10, or 2%');
-		$this->addField('tax_name');
-		$this->addField('tax_value')->hint('if fixed amount then 10 else in percentage 2%');
+		// $this->addField('tax_name');
+		// $this->addField('tax_value')->hint('if fixed amount then 10 else in percentage 2%');
 		
 		$this->addHook('beforeSave',$this);
 		$this->addHook('afterSave',$this);
