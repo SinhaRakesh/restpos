@@ -15,9 +15,6 @@ class View_Menu extends \View {
 		foreach ($mc as $m) {
 			$tab = $this->tab->addTab($m['name']);
 			
-			$item = $this->add('Model_MenuItem')->addCondition('menu_category_id',$m->id);
-			$list = $tab->add('Lister');
-			$list->setModel($item);
 		}
 
 		parent::recursiveRender();

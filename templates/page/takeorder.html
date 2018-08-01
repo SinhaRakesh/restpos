@@ -1,3 +1,19 @@
-<div id="{$_name}" class="{$class}" style="{$style}" {$attributes}>
+<div id="{$_name}" class="{$class} takeorder" style="{$style}" {$attributes}>
+	<div class="running-table atk-align-center">
+		{$running_table}
+	</div>
+
+	<div class="atk-row">
+		<div class="atk-col-2 menucategory">
+			{$menu_category}
+		</div>
+		<div class="atk-col-4 menuitem" style="border-left: 0px;">
+			{$menu_item}
+		</div>
+		<div class="atk-col-6 ordersummary">
+			{$pos}
+		</div>
+	</div>
+
 	{$Content}	
 </div>

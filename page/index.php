@@ -11,6 +11,7 @@ class page_index extends Page {
 		$btn->set('New Order')->addClass('fullwidth atk-button-large');
 		if($btn->isClicked()){
 			$order = $this->add('Model_Order');
+			$order['status'] = "Running";
 			$order->save();
 			$this->app->redirect($this->app->url('takeorder',['orderid'=>$order->id]));
 		}

@@ -256,7 +256,8 @@ tr.delivered{
 .ui-tabs.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active {
     margin-bottom: 0.2em;
     padding-bottom: 0;
-    border-right: 1px solid white;
+    border-bottom: 1px solid gray !important;
+    border-right: 1px solid white !important;
 }
 .ui-tabs.ui-tabs-vertical .ui-tabs-nav li:last-child {
     margin-bottom: 10px;
@@ -269,3 +270,75 @@ tr.delivered{
     position: relative;
     /*left: -1px;*/
 }
+
+.ui-tabs-panel.ui-widget-content{
+	padding: 5px !important;
+}
+
+.running-table{
+	height: 40px;
+	border-bottom: 3px solid gray;
+	overflow-x: auto;
+}
+
+/*take order */
+
+.takeorder .menucategory,
+.takeorder .menuitem{
+	border-right: 2px solid #f3f3f3;
+	max-height: 500px;
+	min-height: 500px;
+	overflow-y: auto;
+}
+
+.menucategory-wrapper li{
+	border-bottom: 1px solid white !important;
+}
+
+.menuitem-single{
+
+}
+
+.takeorder .running-table .atk-menu-horizontal > li{
+	border-right:1px solid #f0f0f0;
+	padding:0px 5px 5px 0px; 
+}
+
+.overlay{
+	-moz-border-radius-topleft: 2px;
+  -webkit-border-top-left-radius: 2px;
+  border-top-left-radius: 2px;
+  -moz-border-radius-topright: 2px;
+  -webkit-border-top-right-radius: 2px;
+  border-top-right-radius: 2px;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  -moz-transition: 0.4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  background-color: #474747;
+  position: absolute;
+  width: 90%;
+  /*display: none;*/
+}
+.overlay .inner{
+	display: table;
+  	height: 100%;
+}
+
+.overlay .content{
+	color: #fff;
+	padding-top: 10px;
+	display: table-cell;
+	vertical-align: middle;
+}
+.menuitem-single:hover .overlay{
+	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=1);
+	opacity: 1;
+	background-color:  rgba(0, 0, 0, 0.8);
+}
+
+.overlay input{
+	width:100%;
+}
+/*end take order*/

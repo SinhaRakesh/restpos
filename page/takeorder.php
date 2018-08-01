@@ -9,48 +9,130 @@ class page_takeorder extends Page {
 	public $customer;
 	public $customer_id;
 
+	public $category_lister;
+	public $item_lister;
+	public $running_table_lister;
+	public $view_pos;
+
 	function init(){
 		parent::init();
-		
-
-		$this->col = $this->add('Columns');
-		$this->col1 = $this->col->addColumn(6);
-		$this->col2 = $this->col->addColumn(6);
 
 		$this->table_id = $this->app->stickyGET('tableid');
 		$this->order_id = $this->app->stickyGET('orderid');
 		$this->customer_id = $this->app->stickyGET('customerid');
 		$this->menu_cat_id = $this->app->stickyGET('menu_cat_id');
 
-		$this->order_model = $this->add('Model_Order');
+		$this->itemid = $this->app->stickyGET('itemid');
+		$this->itemqty = $this->app->stickyGET('itemqty');
 
 		$this->setMenus();
-		// $this->setOrder();
-		// $this->createPos();
+		$this->setOrder();
+		$this->createPos();
 	}
 
 	function setMenus(){
-		$this->col1->add('View_Menu');
+
+		// running table
+		$str = '<ul id="{$_name}" style="{$style}" class="{$class} atk-menu atk-menu-horizontal runningtable-wrapper">
+					{rows}{row}
+				  <li class="runningtable-single" data-tableid="{$table_id}">
+				    <a class="" href="#">
+				    	<strong>{$table}</strong><span class="atk-cell"></span>
+				    </a>
+				  </li>
+				  {/}{/}
+				</ul>';
+		$template = $this->add('GiTemplate');
+		$template->loadTemplateFromString($str);
+		$order = $this->add('Model_Order');
+		$order->addCondition([['status','Running'],['status','Complete']]);
+		$order->addCondition('table_id','>',0);
+		$this->running_table_lister = $lister = $this->add('CompleteLister',null,'running_table',$template);
+		$lister->setModel($order);
+
+		// menu category
+		$mc = $this->add('Model_MenuCategory');
+		$mc->addCondition('is_active',true);
+
+		$template = '<ul id="{$_name}" class="atk-menu-vertical menucategory-wrapper">
+						{rows}{row}	
+							<li class="atk-padding-small atk-swatch-gray" data-catid="{$id}">{$name}</li>
+						{/rows}{/row}
+					</ul>';
+
+		$temp = $this->add('GiTemplate');
+		$temp->loadTemplateFromString($template);
+		$this->category_lister = $lister = $this->add('CompleteLister',null,'menu_category',$temp);
+		$lister->setModel($mc);
+				
+		// menu items
+		$mi = $this->add('Model_MenuItem');
+		$mi->addCondition('is_active',true);
+		$template = '<div class="{$_name}" class="{$class} menuitem-wrapper" style="{$style}">
+						<div class="atk-row" style="margin-left: 0px;">
+						{rows}{row}
+							<div data-id="{$id}" data-catname="{$menu_category}" class="atk-col-6 atk-padding-small menuitem-single" style="border-left: 0px;">
+								<div class="atk-box-small atk-align-center" style="position: relative;">
+									<div class="overlay" style="color:red;">
+					                    <div class="inner">
+					                        <div class="content">
+					                            {$name}
+					                            <input class="orderqty" value="1" type="number">
+					                            <button data-id="{$id}" class="atk-button-small addto-order">Add</button>
+					                        </div>
+					                    </div>
+					                </div>
+
+									<image src="{image_url}{/}" style="width:120px; height:70px;" />
+									<p class="Heading h4">{$name}-{$code}</p>
+
+								</div>
+							</div>
+						{/rows}{/row}
+						</div>
+					</div>';
+		// used for backgrounf
+		// style="background:url($image);background-size:100%;"
+		$temp = $this->add('GiTemplate');
+		$temp->loadTemplateFromString($template);
+		$this->item_lister = $lister = $this->add('CompleteLister',null,'menu_item',$temp);
+		$lister->setModel($mi);
+		$lister->addHook('formatRow',function($l){
+			if($l->model['image'])
+				$l->current_row_html['image_url'] = $l->model['image'];
+			else
+				$l->current_row_html['image_url'] = "templates/images/restaurants/restaurants/gourmet_0star.png";
+		});
+
+	}
+
+	function page_menuitem(){
+		$catid = $_GET['catid'];
+
+		$model = $this->add('Model_MenuItem');
+		$model->addCondition('menu_category_id',$catid);
+		$model->addCondition('is_active',true);
+
+		$grid = $this->add('Grid');
+		$grid->setModel($model,['name','code']);
+		$grid->template->tryDel('Pannel');
+
 	}
 
 	function setOrder(){
-		if($this->table_id){
-			$this->order_model->addCondition('table_id',$this->table_id);
-			$this->order_model->addCondition('status','Running');
-			$this->order_model->setOrder('id','desc');
-			// $this->order_model->setLimit(1);
-		}
+		$this->order_model = $this->add('Model_Order');
 
 		if($this->order_id){
-			$this->order_model->load('id',$this->order_id);
-		}else{
-			$this->order_model->tryLoadAny();
-			if(!$this->order_model->loaded()){
-				$this->order_model['created_at'] = $this->app->now;
-				$this->order_model['status'] = "Running";
-			}
-		}
+			$this->order_model->load($this->order_id);
+		}elseif($this->table_id){
+			$this->order_model->addCondition('table_id',$this->table_id);
+			$this->order_model->addCondition([['status','Running'],['status','Complete']]);
 
+		}elseif(!$this->order_model->loaded()){
+
+			$this->order_model['created_at'] = $this->app->now;
+			$this->order_model['status'] = "Running";
+		}
 		if($this->customer_id)
 			$this->order_model['customer_id'] = $this->customer_id;
 
@@ -58,46 +140,48 @@ class page_takeorder extends Page {
 	}
 
 	function createPos(){
+		if(!$this->order_model->loaded()) throw new \Exception("Order not found, something wrong");
+		
+		$this->view_pos = $view_pos = $this->add('View',null,'pos');
+
+		if($this->itemid){
+			$new_od_model = $this->add('Model_OrderDetail');
+			$new_od_model->addHook('beforeSave',[$new_od_model,'updateFromItem']);
+			$new_od_model['order_id'] = $this->order_id;
+			$new_od_model['menu_item_id'] = $this->itemid;
+			$new_od_model['qty'] = $this->itemqty;
+			$new_od_model->save();
+		}
+
 		$this->detail_model = $detail_model = $this->add('Model_OrderDetail');
 		$detail_model->addCondition('order_id',$this->order_model->id);
 		$detail_model->addHook('beforeSave',[$detail_model,'updateFromItem']);
 
+		// $form = $view_pos->add('Form');
+		// $cat_field = $form->addField('DropDown','menu_category');
+		// $cat_field->setModel('MenuCategory')->addCondition('is_active',true);
+		// $cat_field->setEmptyText('Select Category To Filter Menu Items');
+		// $form->setModel($detail_model,['menu_item_id','qty','narration']);
 
-		$tabs = $col1->add('Tabs');
-		$tabs->toLeft();
-		$tabs->addTab('hello');
-		$tabs->addTab('hello1');
-		$tabs->addTab('hello2');
+		// $item_field = $form->getElement('menu_item_id');
+		// $item_field->Validate('required');
+		// if($this->menu_cat_id){
+		// 	$item_field->getModel()->addCondition('menu_category_id',$this->menu_cat_id);
+		// }
+		// $form->getElement('qty')->Validate('required');
+		// $cat_field->js('change',$form->js()->atk4_form('reloadField','menu_item_id',[$this->app->url(null,['cut_object'=>$item_field->name]),'menu_cat_id'=>$cat_field->js()->val()]));
 
-		$col2 = $col->addColumn(6);
-
-		$form = $col1->add('Form');
-		$cat_field = $form->addField('DropDown','menu_category');
-		$cat_field->setModel('MenuCategory')->addCondition('is_active',true);
-		$cat_field->setEmptyText('Select Category To Filter Menu Items');
-		$form->setModel($detail_model,['menu_item_id','qty','narration']);
-
-		$item_field = $form->getElement('menu_item_id');
-		$item_field->Validate('required');
-		if($this->menu_cat_id){
-			$item_field->getModel()->addCondition('menu_category_id',$this->menu_cat_id);
-		}
-
-		$form->getElement('qty')->Validate('required');
-
-		$cat_field->js('change',$form->js()->atk4_form('reloadField','menu_item_id',[$this->app->url(null,['cut_object'=>$item_field->name]),'menu_cat_id'=>$cat_field->js()->val()]));
-
-		$form->addSubmit('Add');
-		if($form->isSubmitted()){
-			$form->save();
-			$this->order_model['status'] = "Running";
-			$form->js(null,[$form->js()->reload(['menu_cat_id'=>$form['menu_category']]),$col2->js()->reload()])->univ()->successMessage('Menu Item Added')->execute();
-		}
+		// $form->addSubmit('Add');
+		// if($form->isSubmitted()){
+		// 	$form->save();
+		// 	$this->order_model['status'] = "Running";
+			// $form->js(null,[$form->js()->reload(['menu_cat_id'=>$form['menu_category']]),$col2->js()->reload()])->univ()->successMessage('Menu Item Added')->execute();
+		// }
 
 		// col2 detail
 
 		if($detail_model->count()->getOne()){
-			$set = $col2->add('ButtonSet');
+			$set = $view_pos->add('ButtonSet');
 			$set->add('Button')->set('Total: '.$this->order_model['amount']." ".$this->app->company['currency'])->addClass('atk-swatch-yellow');
 			$checkout_btn = $set->add('Button');
 			$checkout_btn->set('Checkout')->addClass('atk-swatch-green')->setIcon('money');
@@ -111,19 +195,34 @@ class page_takeorder extends Page {
 			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print');
 			// $crud->grid->addTotals(['qty','price']);
 		}
-		$crud = $col2->add('CRUD',['entity_name'=>'Menu Item','allow_add'=>false]);
-		$crud->setModel($detail_model,['menu_item_id','qty','narration'],['menu_item','qty','price','narration']);
+		$crud = $view_pos->add('CRUD',['entity_name'=>'Menu Item','allow_add'=>false]);
+		$crud->setModel($detail_model,['qty','narration'],['menu_item','qty','narration']);
 		$crud->grid->addSno('S.No.');
-		// if($crud->grid){
-		// 	$crud->grid->addFormatter('qty','grid/inline');
-		// }
+
+		// $view_pos->add('View')->set(rand(199,9999)." = item ".$this->itemid);
 	}
 
 	function page_checkout(){
 
 	}
 
+	function recursiveRender(){
+
+		$this->item_lister->js('click',$this->view_pos->js()->reload(
+				[
+					'itemid'=>$this->js()->_selectorThis()->closest(".menuitem-single")->data('id'),
+					'itemqty'=>$this->js()->_selectorThis()->closest(".menuitem-single")->find('.orderqty')->val(),
+			]))->_selector('.menuitem-single .addto-order')->univ()->successMessage('hello');
+		// ->ajaxec(
+		// 	array($this->api->url('update'),
+		// 	'markreadyid'=>$this->js()->_selectorThis()->data('id'),
+		// 	'cut_page'=>1
+		// ));
+
+		parent::recursiveRender();
+	}
+
 	function defaultTemplate(){
-		return ['page\takeorder'];
+	return ['page\takeorder'];
 	}
 }
