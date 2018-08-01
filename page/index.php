@@ -1,28 +1,20 @@
 <?php
 
-
 class page_index extends Page {
 	
 	function init(){
 		parent::init();
 
-		$order = $this->add('Model_Order');
-		$order->addCondition('status','Draft');
-		$order->addCondition('created_date_only',$this->app->today);
 
-		$crud = $this->add('CRUD');
-		$crud->setModel($order);
+		// $qsp_model->_dsql()->del('fields')->field('max(CAST('.$this->number_field.' AS decimal))')->where('type',$this['type'])->where('serial',$serial)->getOne() + 1 ;
+		$btn = $this->add('Button');
+		$btn->set('New Order')->addClass('fullwidth atk-button-large');
+		if($btn->isClicked()){
+			$order = $this->add('Model_Order');
+			$order->save();
+			$this->app->redirect($this->app->url('takeorder',['orderid'=>$order->id]));
+		}
 
-		$crud->grid->add('VirtualPage')
-		->addColumn('Table','Items')
-		->set(function($page){
-			$id = $_GET[$page->short_name.'_id'];
-
-			$m = $page->add('Model_OrderDetail');
-			$m->addCondition('order_id',$id);
-			$crud = $page->add('CRUD');
-			$crud->setModel($m);
-		});
-
-	}	
+		$this->add('View_Lister_Order');
+	}
 }

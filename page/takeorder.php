@@ -54,6 +54,13 @@ class page_takeorder extends Page {
 
 		$col = $this->add('Columns');
 		$col1 = $col->addColumn(6);
+
+		$tabs = $col1->add('Tabs');
+		$tabs->toLeft();
+		$tabs->addTab('hello');
+		$tabs->addTab('hello1');
+		$tabs->addTab('hello2');
+
 		$col2 = $col->addColumn(6);
 
 		$form = $col1->add('Form');

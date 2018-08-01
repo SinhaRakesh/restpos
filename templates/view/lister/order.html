@@ -1,0 +1,22 @@
+<div id="{$_name}" class="{$class} homeorder" style="{$style}">
+
+	<div class="atk-row atk-push-small">
+	{rows}
+	{row}
+		<div class="atk-col-2 listorder {$status}" data-id="{$id}">
+			<div class="order-detail">
+			<h3 class="atk-text-bold atk-text-dimmed">Order: {$name}<br/><small>{$created_at}</small></h3>
+			{order_detail}
+			{/}
+
+			{$action_btn}
+			{$Content}
+
+			</div>
+		</div>
+	{/row}
+	{/rows}
+
+	</div>
+
+</div>

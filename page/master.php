@@ -16,6 +16,7 @@ class page_master extends Page {
         $tab->addTabUrl('./staff','Staff');
         $tab->addTabUrl('./customer','Customer');
         $tab->addTabUrl('./tax','Tax');
+        $tab->addTabUrl('./order','Order');
 	}
 
 
@@ -31,34 +32,43 @@ class page_master extends Page {
 	}
 
 	function page_table(){
-		$m = $this->add('Model_Room');
+		$m = $this->add('Model_Space');
+		$m->setOrder('name','asc');
 		$c = $this->add('CRUD');
 		$c->setModel($m);
+		$c->grid->addPaginator(10);
 
 		$c->grid->add('VirtualPage')
-		->addColumn('Table','Room Table')
+		->addColumn('Table',"Table")
 		->set(function($page){
 			$id = $_GET[$page->short_name.'_id'];
 			$m = $page->add('Model_RoomTable');
 			$m->addCondition('room_id',$id);
-			$crud = $page->add('CRUD');
+			$crud = $page->add('CRUD',['entity_name'=>'Table']);
 			$crud->setModel($m);
+
 		});
 	}
 
 	function page_menu(){
 		$m = $this->add('Model_MenuCategory');
-		$c = $this->add('CRUD');
+		$c = $this->add('CRUD',['entity_name'=>'Menu Category']);
 		$c->setModel($m);
+		$c->grid->addPaginator(15);
 
 		$c->grid->add('VirtualPage',['frame_options'=>'des'])
 		->addColumn('Item','Menu Items')
 		->set(function($page){
 			$id = $_GET[$page->short_name.'_id'];
+
+			$cat_model = $this->add('Model_MenuCategory')->load($id);
+
 			$m = $page->add('Model_MenuItem');
 			$m->addCondition('menu_category_id',$id);
-			$crud = $page->add('CRUD');
+			$crud = $page->add('CRUD',['entity_name'=>'Menu Items']);
 			$crud->setModel($m);
+
+			// $crud->grid->add("View_Box",null,'right_panel')->set("List of ".$cat_model['name']);
 		});
 	}
 
@@ -78,6 +88,26 @@ class page_master extends Page {
 		$m = $this->add('Model_Customer');
 		$c = $this->add('CRUD');
 		$c->setModel($m);
+	}
+
+	function page_order(){
+		$order = $this->add('Model_Order');
+		// $order->addCondition('status','Draft');
+		// $order->addCondition('created_date_only',$this->app->today);
+
+		$crud = $this->add('CRUD');
+		$crud->setModel($order);
+
+		$crud->grid->add('VirtualPage')
+		->addColumn('Table','Items')
+		->set(function($page){
+			$id = $_GET[$page->short_name.'_id'];
+
+			$m = $page->add('Model_OrderDetail');
+			$m->addCondition('order_id',$id);
+			$crud = $page->add('CRUD');
+			$crud->setModel($m);
+		});
 	}
 
 }

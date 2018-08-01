@@ -9,7 +9,7 @@ class View_Room extends \CompleteLister {
 		$this->vp = $this->add('VirtualPage');
 		$this->vp->set([$this,'customerinfo']);
 
-		$tables = $this->add('Model_SpaceTable')
+		$tables = $this->add('Model_RoomTable')
 				->addCondition('is_active',true)
 				->addCondition('room_id',$this->room_model->id)
 				;
@@ -53,7 +53,7 @@ class View_Room extends \CompleteLister {
 
 		$table_id = $this->app->stickyGET('orderable_id');
 
-		$table_model = $this->add('Model_SpaceTable')->load($table_id);
+		$table_model = $this->add('Model_RoomTable')->load($table_id);
 		$form = $page->add('Form');
 		$form->add('Controller_FLC')
 			->showLables(true)

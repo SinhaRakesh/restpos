@@ -12,14 +12,14 @@ class Model_Order extends Model_Table{
 		$this->hasOne('Room','room_id');
 		$this->hasOne('RoomTable','table_id');
 
+		$this->addField('serial');
 		$this->addField('name');
-		$this->addField('created_at')->type('datetime')->system(true);
+		$this->addField('created_at')->type('datetime');
 
 		$this->addExpression('created_date_only','DATE(created_at)');
-		// $this->addExpresion('created_time_only','TIME(created_at)');
-		$this->addField('updated_at')->type('datetime')->set($this->app->now)->system(true);
+		$this->addExpression('created_time_only','TIME(created_at)');
 
-		$this->addField('status')->enum(['Running','Paid','Void'])->defaultValue('Running');
+		$this->addField('status')->enum(['Running','Complete','Paid','Void'])->defaultValue('Running');
 
 		$this->hasOne('User','created_by_id')->defaultValue(@$this->app->auth->model->id);
 		$this->hasOne('User','paid_by_id')->defaultValue(@$this->app->auth->model->id);
@@ -38,7 +38,12 @@ class Model_Order extends Model_Table{
 	}
 
 	function beforeSave(){
-		$this['name'] = $this->id;
+
+		if(!$this['name']){
+			$this['name'] = $this->id;
+		// 	$this['name'] = $this->_dsql()->del('fields')->field('max(CAST(name AS decimal))')->where('status','Paid')->getOne() + 1;
+		}
+		
 		if(!$this['created_at']){
 			$this['created_at'] = $this->app->now;
 		}
