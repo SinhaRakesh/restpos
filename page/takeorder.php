@@ -55,8 +55,9 @@ class page_takeorder extends Page {
 		$mc->addCondition('is_active',true);
 
 		$template = '<ul id="{$_name}" class="atk-menu-vertical menucategory-wrapper">
+						<li class="atk-padding-small atk-swatch-gray menucategory-single" data-id="0">All</li>
 						{rows}{row}	
-							<li class="atk-padding-small atk-swatch-gray" data-catid="{$id}">{$name}</li>
+							<li class="atk-padding-small atk-swatch-gray menucategory-single" data-id="{$id}">{$name}</li>
 						{/rows}{/row}
 					</ul>';
 
@@ -68,10 +69,10 @@ class page_takeorder extends Page {
 		// menu items
 		$mi = $this->add('Model_MenuItem');
 		$mi->addCondition('is_active',true);
-		$template = '<div class="{$_name}" class="{$class} menuitem-wrapper" style="{$style}">
+		$template = '<div id="{$_name}" class="{$class} menuitem-wrapper" style="{$style}">
 						<div class="atk-row" style="margin-left: 0px;">
 						{rows}{row}
-							<div data-id="{$id}" data-catname="{$menu_category}" class="atk-col-6 atk-padding-small menuitem-single" style="border-left: 0px;">
+							<div data-id="{$id}" data-catname="{$menu_category}" data-catid="{$menu_category_id}" class="atk-col-6 atk-padding-small menuitem-single" style="border-left: 0px;">
 								<div class="atk-box-small atk-align-center" style="position: relative;">
 									<div class="overlay" style="color:red;">
 					                    <div class="inner">
@@ -151,6 +152,7 @@ class page_takeorder extends Page {
 			$new_od_model['menu_item_id'] = $this->itemid;
 			$new_od_model['qty'] = $this->itemqty;
 			$new_od_model->save();
+			$this->order_model->reload();
 		}
 
 		$this->detail_model = $detail_model = $this->add('Model_OrderDetail');
@@ -182,7 +184,6 @@ class page_takeorder extends Page {
 
 		if($detail_model->count()->getOne()){
 			$set = $view_pos->add('ButtonSet');
-			$set->add('Button')->set('Total: '.$this->order_model['amount']." ".$this->app->company['currency'])->addClass('atk-swatch-yellow');
 			$checkout_btn = $set->add('Button');
 			$checkout_btn->set('Checkout')->addClass('atk-swatch-green')->setIcon('money');
 			$checkout_btn->add('VirtualPage')
@@ -190,16 +191,22 @@ class page_takeorder extends Page {
 				->set(function($page){
 					
 				});
-
 			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print');
 			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print');
 			// $crud->grid->addTotals(['qty','price']);
 		}
 		$crud = $view_pos->add('CRUD',['entity_name'=>'Menu Item','allow_add'=>false]);
-		$crud->setModel($detail_model,['qty','narration'],['menu_item','qty','narration']);
+		$crud->setModel($detail_model,['qty','narration'],['menu_item','qty','narration','amount']);
 		$crud->grid->addSno('S.No.');
+		// $crud->grid->addTotals(['amount']);
 
+		$view_total = $view_pos->add('View');
+		$view_total->addClass('fullwidth atk-align-right atk-text-bold atk-padding-small atk-swatch-yellow');
+		$view_total->setHtml('Total:&nbsp;<i class="icon-rupee"></i>'.$this->order_model['amount']);
+
+		$crud->grid->js('reload',$view_total->js()->reload());
 		// $view_pos->add('View')->set(rand(199,9999)." = item ".$this->itemid);
+
 	}
 
 	function page_checkout(){
@@ -208,16 +215,23 @@ class page_takeorder extends Page {
 
 	function recursiveRender(){
 
+		// on item add to order
 		$this->item_lister->js('click',$this->view_pos->js()->reload(
 				[
 					'itemid'=>$this->js()->_selectorThis()->closest(".menuitem-single")->data('id'),
 					'itemqty'=>$this->js()->_selectorThis()->closest(".menuitem-single")->find('.orderqty')->val(),
-			]))->_selector('.menuitem-single .addto-order')->univ()->successMessage('hello');
+			]))->_selector('.menuitem-single .addto-order')->univ()->successMessage('added to order');
 		// ->ajaxec(
 		// 	array($this->api->url('update'),
 		// 	'markreadyid'=>$this->js()->_selectorThis()->data('id'),
 		// 	'cut_page'=>1
 		// ));
+
+		//  filter item based on category
+		// $this->category_lister->js('click',[
+		// 	$this->item_lister->js()->find('.menuitem-single')->hide(),
+		// 	$this->item_lister->js()->find('.menuitem-single')->show()
+		// ])->_selector('.menucategory-single');
 
 		parent::recursiveRender();
 	}

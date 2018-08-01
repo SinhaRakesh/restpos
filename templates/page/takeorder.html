@@ -16,4 +16,20 @@
 	</div>
 
 	{$Content}	
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".menucategory-single").click(function(e){
+				$('.menucategory-single').removeClass('active');
+				if($(this).attr('data-id') > 0){
+					$(".menuitem-wrapper").find('.menuitem-single').hide();
+					$(".menuitem-single[data-catid='"+$(this).attr('data-id')+"']").show();
+				}else{
+					$(".menuitem-single").show();
+				}
+				$(this).addClass('active');
+			});
+		});
+
+	</script>
 </div>

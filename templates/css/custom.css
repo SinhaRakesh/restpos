@@ -342,3 +342,9 @@ tr.delivered{
 	width:100%;
 }
 /*end take order*/
+
+.menucategory-single.active{
+  background: gray;
+  color:white;
+  font-weight: bold;
+}
