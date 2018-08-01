@@ -12,6 +12,11 @@ class page_takeorder extends Page {
 	function init(){
 		parent::init();
 		
+
+		$this->col = $this->add('Columns');
+		$this->col1 = $this->col->addColumn(6);
+		$this->col2 = $this->col->addColumn(6);
+
 		$this->table_id = $this->app->stickyGET('tableid');
 		$this->order_id = $this->app->stickyGET('orderid');
 		$this->customer_id = $this->app->stickyGET('customerid');
@@ -19,8 +24,13 @@ class page_takeorder extends Page {
 
 		$this->order_model = $this->add('Model_Order');
 
-		$this->setOrder();
-		$this->createPos();
+		$this->setMenus();
+		// $this->setOrder();
+		// $this->createPos();
+	}
+
+	function setMenus(){
+		$this->col1->add('View_Menu');
 	}
 
 	function setOrder(){
@@ -52,8 +62,6 @@ class page_takeorder extends Page {
 		$detail_model->addCondition('order_id',$this->order_model->id);
 		$detail_model->addHook('beforeSave',[$detail_model,'updateFromItem']);
 
-		$col = $this->add('Columns');
-		$col1 = $col->addColumn(6);
 
 		$tabs = $col1->add('Tabs');
 		$tabs->toLeft();
@@ -113,5 +121,9 @@ class page_takeorder extends Page {
 
 	function page_checkout(){
 
+	}
+
+	function defaultTemplate(){
+		return ['page\takeorder'];
 	}
 }
