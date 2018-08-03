@@ -3,7 +3,7 @@ $config['url_prefix']='?page=';
 $config['url_postfix']='';
 $config['xepan-mysql-host']='127.0.0.1';
 
-$config['locale']['date_js'] = 'dd/mm/yyyy';
+$config['locale']['date_js'] = 'dd/mm/yy';
 
 // $config['js']['versions']['jqueryui']='1.11.master';
 
@@ -15,4 +15,3 @@ $config['all_rights_to_superuser'] = true;
 $config['status_icon'] = [];
 
 $config['filestore']['chmod'] = 0755;
-$config['paymentgateways'] = ['Instamojo','CCAvenue'];

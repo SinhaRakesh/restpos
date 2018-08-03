@@ -30,7 +30,7 @@ class Form_Field_DatePicker extends Form_Field_Line {
     function addCalendarIcon() {
         $this->addButton('',array('options'=>array('text'=>false)))
             ->setHtml('')
-            ->setIcon(' fa fa-calendar')
+            ->setIcon('calendar')
             ->js('click',$this->js()->datepicker('show'));
         $this->js('focus', $this->js()->datepicker('show'));
     }
@@ -38,13 +38,12 @@ class Form_Field_DatePicker extends Form_Field_Line {
         // $this->value contains date in MySQL format
         // we need it in locale format
 
-        $this->js(true)->_load('bootstrap-datepicker')->_css('libs/datepicker');
         $this->js(true)->datepicker(array_merge(array(
                     'duration'=>0,
                     'showOn'=>'none',
                     'changeMonth'=>true,
                     'changeYear'=>true,
-                    'format'=>$this->app->getConfig('locale/date_js','dd/mm/yyyy')
+                    'dateFormat'=>$this->app->getConfig('locale/date_js','dd/mm/yy')
                     ),$this->options));
 
         return parent::getInput(array_merge(

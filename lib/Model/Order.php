@@ -24,7 +24,7 @@ class Model_Order extends Model_Table{
 		$this->addField('paid_at')->type('datetime')->system(true);
 		$this->addField('void_at')->type('datetime')->system(true);
 
-		$this->addField('discount_voucher');
+		$this->addField('discount_coupon');
 		$this->addField('discount_amount')->defaultValue(0);
 
 		$this->addExpression('created_date_only','DATE(created_at)');

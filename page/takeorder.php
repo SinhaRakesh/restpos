@@ -170,11 +170,8 @@ class page_takeorder extends Page {
 			$checkout_btn = $set->add('Button');
 
 			$checkout_btn->set('Checkout')->addClass('atk-swatch-green')->setIcon('money');
-			$checkout_btn->add('VirtualPage')
-				->bindEvent('Payment','click')
-				->set(function($page){
-					
-				});
+			$checkout_btn->js('click')->univ()->frameURL('Payment of Order - '.$this->order_model['name'],$this->app->url('checkout',['orderid'=>$this->order_model->id]));
+
 			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'kot','orderid'=>$this->order_model->id,'cut_page'=>1]),'kot'.$this->order_model->id);
 			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'bill','orderid'=>$this->order_model->id,'cut_page'=>1]),'bill'.$this->order_model->id);
 			// $crud->grid->addTotals(['qty','price']);
@@ -193,14 +190,24 @@ class page_takeorder extends Page {
 
 		$view_total = $crud->grid->add('View');
 		$view_total->addClass('fullwidth atk-align-right atk-text-bold atk-padding-small atk-swatch-yellow');
-		$view_total->setHtml('Total:&nbsp;<i class="icon-rupee"></i>'.$this->order_model['net_amount']);
 
+		if($this->order_model['status'] == "Paid"){
+			$view_total->setHtml(
+					'<table style="width:100%;">'.
+					'<tr style="border-bottom:1px solid #f3f3f3;"><td> Gross Amount: </td> <td align="right">'.$this->order_model['gross_amount']."</td></tr>".
+					'<tr style="border-bottom:1px solid #f3f3f3;"><td> Discount Amount:</td> <td align="right">'.($this->order_model['discount_amount']?:0)."</td></tr>".
+					'<tr><td> Net Amount: </td> <td align="right" class="atk-size-kilo atk-effect-danger"> '.$this->order_model['net_amount']."</td></tr>".
+					'</table>'
+				);
+		}else{
+			$view_total->setHtml(
+				'Net Amount:&nbsp;<i class="icon-rupee"></i>'.($this->order_model['net_amount']?:0)
+			);
+		}
+		$crud->grid->add('View',null,'grid_buttons')->set('Order Number : '.$this->order_model['name']);
+		$crud->grid->add('View',null,'right_panel')->set(" Status : ".$this->order_model['status']);
 		// $crud->grid->js('reload',$view_total->js()->reload());
 		// $view_pos->add('View')->set(rand(199,9999)." = item ".$this->itemid);
-
-	}
-
-	function page_checkout(){
 
 	}
 
