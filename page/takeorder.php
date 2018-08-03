@@ -25,6 +25,10 @@ class page_takeorder extends Page {
 		$this->itemid = $this->app->stickyGET('jslisteritemid');
 		$this->itemqty = $this->app->stickyGET('jslisteritemqty');
 
+		if(!$this->order_id){
+			throw new \Exception("some thing wrong, order is not created", 1);
+		}
+
 		$this->setMenus();
 		$this->setOrder();
 		$this->createPos();

@@ -60,7 +60,7 @@ class page_checkout extends Page {
 			if($discount_form['discount_coupon']){
 				// todo
 			}
-
+			
 			$this->order_model['discount_coupon'] = $discount_form['discount_coupon'];
 			$this->order_model['discount_amount'] = $discount_amount;
 			$this->order_model->save();

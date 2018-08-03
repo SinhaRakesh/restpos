@@ -47,7 +47,7 @@ class View_Lister_Order extends \CompleteLister {
 			$row_html .= "<tr class='".$class."'><td>".$od['qty']."</td><td> ".$od['menu_item']."</td><td><i class='".$icon."'></i></td></tr>";
 		}
 
-		$row_html .= "<tr><td colspan='3' style='border-top:1px solid #f3f3f3;' align='right'><h4><i class='icon-rupee'></i>".($this->model['amount']?:0)."</h4></td></tr>";
+		$row_html .= "<tr><td colspan='3' style='border-top:1px solid #f3f3f3;' align='right'><h4><i class='icon-rupee'></i>".($this->model['net_amount']?:0)."</h4></td></tr>";
 		$row_html .= "</table>";
 		
 		$this->current_row_html['order_detail'] = $row_html;
@@ -55,7 +55,7 @@ class View_Lister_Order extends \CompleteLister {
 		if($this->model['status'] == "Running"){
 			$this->current_row_html['action_btn'] = '<button data-id="'.$this->model->id.'" class=" do-mark-complete fullwidth atk-button-small atk-button atk-swatch-blue">Mark Ready</button>';
 		}elseif($this->model['status'] == "Complete"){
-			$this->current_row_html['action_btn'] = '<button data-id="{$id}" class=" do-payment fullwidth atk-button-small atk-button atk-swatch-green">Payment</button>';
+			$this->current_row_html['action_btn'] = '<a href="?page=takeorder&orderid='.$this->model->id.'" data-id="{$id}" class=" do-payment fullwidth atk-button-small atk-button atk-swatch-green">Payment</a>';
 		}
 
 		parent::formatRow();
@@ -68,6 +68,10 @@ class View_Lister_Order extends \CompleteLister {
 			'markreadyid'=>$this->js()->_selectorThis()->data('id'),
 			'cut_page'=>1
 		));
+
+		// $this->js('click')->_selector('.do-payment')->univ()->redirect(
+		// 		$this->app->url('takeorder')]
+			// );
 		parent::recursiveRender();
 	}
 
