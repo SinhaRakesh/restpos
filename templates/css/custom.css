@@ -114,8 +114,12 @@ h4.room-heading {
 }
 
 .has-running-order{
-	background-color: #ffcc00;
-	color: white;
+  /*background-color: #ffcc00;*/
+  color: white;
+}
+.has-running-order .room-table{
+  background-color: #e9f9e9;
+	color: #167616;
 }
 
 .has-no-running-order{

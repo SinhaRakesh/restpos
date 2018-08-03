@@ -13,6 +13,7 @@ class View_Room extends \CompleteLister {
 				->addCondition('is_active',true)
 				->addCondition('room_id',$this->room_model->id)
 				;
+
 		$this->setModel($tables);
 		$this->template->trySet('room_name',$this->room_model['name']);
 
@@ -23,7 +24,7 @@ class View_Room extends \CompleteLister {
 
 		if($this->model['running_order_id']){
 			$this->current_row_html['table_class'] = "has-running-order";
-			$url = $this->app->url('takeorder',['tableid'=>$this->model['id']]);
+			$url = $this->app->url('takeorder',['orderid'=>$this->model['running_order_id']]);
 			$this->current_row_html['order_detail_url'] = $url;
 		}else{
 			$take_order_class =  "take-order-".$this->model['id'];
@@ -34,10 +35,15 @@ class View_Room extends \CompleteLister {
 				->univ()->frameURL('Customer Info',
 					$this->app->url(
 							$this->vp->getURL(),
-							['orderable_id'=>$this->model->id]
+							['ordertable_id'=>$this->model->id]
 						)
 				);
 		}
+
+		if($this->model['running_order_id'])
+			$this->current_row_html['running_order_id'] = $this->model['running_order_id'];
+		else
+			$this->current_row_html['running_order'] = "<small class='atk-text-dimmed'>No Running Order</small>";
 
 	}
 
@@ -51,7 +57,7 @@ class View_Room extends \CompleteLister {
 
 	function customerinfo($page){
 
-		$table_id = $this->app->stickyGET('orderable_id');
+		$table_id = $this->app->stickyGET('ordertable_id');
 
 		$table_model = $this->add('Model_RoomTable')->load($table_id);
 		$form = $page->add('Form');
@@ -76,8 +82,15 @@ class View_Room extends \CompleteLister {
 		$submit_button = $form->addSubmit('Save Customer And Take Order')->addClass('atk-swatch-blue');
 		$skip_button = $form->addSubmit('Skip Now and Take Order');
 		if($form->isSubmitted()){
+
+			$order_model = $this->add('Model_Order');
+			$order_model['table_id'] = $form['table_id'];
+			$order_model['created_at'] = $this->app->now;
+			$order_model['status'] = "Running";
+			$order_model->save();
+
 			if($form->isClicked($skip_button)){
-				$this->app->redirect($this->app->url('takeorder',['tableid'=>$form['table_id']]));
+				$this->app->redirect($this->app->url('takeorder',['orderid'=>$order_model->id]));
 			}
 			
 			if($form->isClicked($submit_button)){
@@ -91,8 +104,8 @@ class View_Room extends \CompleteLister {
 						$customer = $form->save();
 					}
 				}
-
-				$this->app->redirect($this->app->url('takeorder',['tableid'=>$form['table_id'],'customerid'=>$customer->id]));
+				
+				$this->app->redirect($this->app->url('takeorder',['orderid'=>$order_model->id]));
 			}
 		}
 	}

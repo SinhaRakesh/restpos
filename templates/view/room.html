@@ -8,7 +8,8 @@
 		<div class="atk-col-3 table-container" data-tableid={$id}>
 			<a href="{$order_detail_url}" class="{$table_class}" data-tableid={$id}>
 			<div class="room-table shape-{$shape}" data-tableid={$id}>
-				<p>{$name}<br/>Order: {$running_order_id}
+				<p>{$name}
+					<br/>{running_order}<span>Order: {$running_order_id}</span>{/}
 				</p>
 			</div>
 			</a>

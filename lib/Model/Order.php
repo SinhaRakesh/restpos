@@ -12,27 +12,27 @@ class Model_Order extends Model_Table{
 		$this->hasOne('Room','room_id');
 		$this->hasOne('RoomTable','table_id');
 
+		$this->hasOne('User','created_by_id')->defaultValue(@$this->app->auth->model->id);
+		$this->hasOne('User','paid_by_id')->defaultValue(@$this->app->auth->model->id);
+		$this->hasOne('User','void_by_id')->defaultValue(@$this->app->auth->model->id);
+
 		$this->addField('serial');
 		$this->addField('name');
 		$this->addField('created_at')->type('datetime');
 
-		$this->addExpression('created_date_only','DATE(created_at)');
-		$this->addExpression('created_time_only','TIME(created_at)');
-
 		$this->addField('status')->enum(['Running','Complete','Paid','Void'])->defaultValue('Running');
-
-		$this->hasOne('User','created_by_id')->defaultValue(@$this->app->auth->model->id);
-		$this->hasOne('User','paid_by_id')->defaultValue(@$this->app->auth->model->id);
-		$this->hasOne('User','void_by_id')->defaultValue(@$this->app->auth->model->id);
 		$this->addField('paid_at')->type('datetime')->system(true);
 		$this->addField('void_at')->type('datetime')->system(true);
 
+		$this->addExpression('created_date_only','DATE(created_at)');
+		$this->addExpression('created_time_only','TIME(created_at)');
 		$this->addExpression('amount')->set(function($m,$q){
 			$details = $m->refSQL('OrderDetail');
 			return $q->expr("round([0],2)", [$details->sum('amount')]);
 		});
 
 		$this->hasMany('OrderDetail','order_id',null,'OrderDetail');
+		
 		$this->addHook('beforeSave',$this);
 		$this->add('dynamic_model/Controller_AutoCreator');
 	}
