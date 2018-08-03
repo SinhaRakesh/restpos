@@ -5,7 +5,7 @@
 	{row}
 		<div class="atk-col-2 listorder {$status}" data-id="{$id}">
 			<div class="order-detail">
-			<h3 class="atk-text-bold atk-text-dimmed">Order: {$name}<br/><small>{$created_at}</small></h3>
+			<a href="?page=takeorder&orderid={$id}"><h3 class="atk-text-bold atk-text-dimmed">Order: {$name}<br/><small>{$created_at} - {$table}</small></h3></a>
 			{order_detail}
 			{/}
 
@@ -16,7 +16,8 @@
 		</div>
 	{/row}
 	{/rows}
-
 	</div>
-
+	{not_found}
+	<div style="margin-top:10px; " class="atk-align-center atk-box atk-effect-warning atk-section-small">Waiting for customer, right now no running order</div>
+	{/}
 </div>

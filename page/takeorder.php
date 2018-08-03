@@ -22,12 +22,14 @@ class page_takeorder extends Page {
 		$this->customer_id = $this->app->stickyGET('customerid');
 		$this->menu_cat_id = $this->app->stickyGET('menu_cat_id');
 
-		$this->itemid = $this->app->stickyGET('itemid');
-		$this->itemqty = $this->app->stickyGET('itemqty');
+		$this->itemid = $this->app->stickyGET('jslisteritemid');
+		$this->itemqty = $this->app->stickyGET('jslisteritemqty');
 
 		$this->setMenus();
 		$this->setOrder();
 		$this->createPos();
+
+		// $this->app->showExecutionTime();
 	}
 
 	function setMenus(){
@@ -150,8 +152,10 @@ class page_takeorder extends Page {
 			$new_od_model->addHook('beforeSave',[$new_od_model,'updateFromItem']);
 			$new_od_model['order_id'] = $this->order_id;
 			$new_od_model['menu_item_id'] = $this->itemid;
-			$new_od_model['qty'] = $this->itemqty;
+			$new_od_model['qty'] = $this->itemqty?:1;
 			$new_od_model->save();
+			$this->app->stickyForget('jslisteritemid');
+			$this->app->stickyForget('jslisteritemqty');
 			$this->order_model->reload();
 		}
 
@@ -159,52 +163,39 @@ class page_takeorder extends Page {
 		$detail_model->addCondition('order_id',$this->order_model->id);
 		$detail_model->addHook('beforeSave',[$detail_model,'updateFromItem']);
 
-		// $form = $view_pos->add('Form');
-		// $cat_field = $form->addField('DropDown','menu_category');
-		// $cat_field->setModel('MenuCategory')->addCondition('is_active',true);
-		// $cat_field->setEmptyText('Select Category To Filter Menu Items');
-		// $form->setModel($detail_model,['menu_item_id','qty','narration']);
-
-		// $item_field = $form->getElement('menu_item_id');
-		// $item_field->Validate('required');
-		// if($this->menu_cat_id){
-		// 	$item_field->getModel()->addCondition('menu_category_id',$this->menu_cat_id);
-		// }
-		// $form->getElement('qty')->Validate('required');
-		// $cat_field->js('change',$form->js()->atk4_form('reloadField','menu_item_id',[$this->app->url(null,['cut_object'=>$item_field->name]),'menu_cat_id'=>$cat_field->js()->val()]));
-
-		// $form->addSubmit('Add');
-		// if($form->isSubmitted()){
-		// 	$form->save();
-		// 	$this->order_model['status'] = "Running";
-			// $form->js(null,[$form->js()->reload(['menu_cat_id'=>$form['menu_category']]),$col2->js()->reload()])->univ()->successMessage('Menu Item Added')->execute();
-		// }
 
 		// col2 detail
-
 		if($detail_model->count()->getOne()){
 			$set = $view_pos->add('ButtonSet');
 			$checkout_btn = $set->add('Button');
+
 			$checkout_btn->set('Checkout')->addClass('atk-swatch-green')->setIcon('money');
 			$checkout_btn->add('VirtualPage')
 				->bindEvent('Payment','click')
 				->set(function($page){
 					
 				});
-			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print');
-			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print');
+			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'kot','oid'=>$this->order_model->id]),'kot'.$this->order_model->id);
+			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'bill','oid'=>$this->order_model->id]).'bill'.$this->order_model->id);
 			// $crud->grid->addTotals(['qty','price']);
 		}
+
 		$crud = $view_pos->add('CRUD',['entity_name'=>'Menu Item','allow_add'=>false]);
 		$crud->setModel($detail_model,['qty','narration'],['menu_item','qty','narration','amount']);
 		$crud->grid->addSno('S.No.');
+		$crud->grid->addHook('formatRow',function($g){
+
+			$g->current_row_html['menu_item'] = $g->model['menu_item']."<br/>".$g->model['narration'];
+		});
+		$crud->grid->addFormatter('menu_item','wrap');
+		$crud->grid->removeColumn('narration');
 		// $crud->grid->addTotals(['amount']);
 
-		$view_total = $view_pos->add('View');
+		$view_total = $crud->grid->add('View');
 		$view_total->addClass('fullwidth atk-align-right atk-text-bold atk-padding-small atk-swatch-yellow');
 		$view_total->setHtml('Total:&nbsp;<i class="icon-rupee"></i>'.$this->order_model['amount']);
 
-		$crud->grid->js('reload',$view_total->js()->reload());
+		// $crud->grid->js('reload',$view_total->js()->reload());
 		// $view_pos->add('View')->set(rand(199,9999)." = item ".$this->itemid);
 
 	}
@@ -218,8 +209,8 @@ class page_takeorder extends Page {
 		// on item add to order
 		$this->item_lister->js('click',$this->view_pos->js()->reload(
 				[
-					'itemid'=>$this->js()->_selectorThis()->closest(".menuitem-single")->data('id'),
-					'itemqty'=>$this->js()->_selectorThis()->closest(".menuitem-single")->find('.orderqty')->val(),
+					'jslisteritemid'=>$this->js()->_selectorThis()->closest(".menuitem-single")->data('id'),
+					'jslisteritemqty'=>$this->js()->_selectorThis()->closest(".menuitem-single")->find('.orderqty')->val(),
 			]))->_selector('.menuitem-single .addto-order')->univ()->successMessage('added to order');
 		// ->ajaxec(
 		// 	array($this->api->url('update'),

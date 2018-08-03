@@ -14,6 +14,10 @@ class View_Lister_Order extends \CompleteLister {
 		$order = $this->add('Model_Order');
 		$order->addCondition([['status','Running'],['status','Complete']]);
 
+		if($order->count()->getOne()){
+			$this->template->tryDel('not_found');
+		}
+
 		$this->setModel($order);
 
 	}
