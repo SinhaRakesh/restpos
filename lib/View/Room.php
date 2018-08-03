@@ -17,6 +17,10 @@ class View_Room extends \CompleteLister {
 		$this->setModel($tables);
 		$this->template->trySet('room_name',$this->room_model['name']);
 
+		if(!$tables->count()->getOne()){
+			$this->add('View_Warning')->set('no table added in this space');
+		}
+
 	}
 
 	function formatRow(){
@@ -43,7 +47,7 @@ class View_Room extends \CompleteLister {
 		if($this->model['running_order_id'])
 			$this->current_row_html['running_order_id'] = $this->model['running_order_id'];
 		else
-			$this->current_row_html['running_order'] = "<small class='atk-text-dimmed'>No Running Order</small>";
+			$this->current_row_html['running_order_id'] = "<small class='atk-text-dimmed'>No Order</small>";
 
 	}
 
@@ -104,7 +108,7 @@ class View_Room extends \CompleteLister {
 						$customer = $form->save();
 					}
 				}
-				
+
 				$this->app->redirect($this->app->url('takeorder',['orderid'=>$order_model->id]));
 			}
 		}

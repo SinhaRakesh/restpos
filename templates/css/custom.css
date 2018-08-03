@@ -352,3 +352,9 @@ tr.delivered{
   color:white;
   font-weight: bold;
 }
+
+.table-has-order, .table-has-order a{
+  background-color: #1e8bc9;
+  color: white !important;
+  margin-left: 5px;
+}

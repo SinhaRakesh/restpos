@@ -37,8 +37,8 @@ class page_takeorder extends Page {
 		// running table
 		$str = '<ul id="{$_name}" style="{$style}" class="{$class} atk-menu atk-menu-horizontal runningtable-wrapper">
 					{rows}{row}
-				  <li class="runningtable-single" data-tableid="{$table_id}">
-				    <a class="" href="#">
+				  <li class="runningtable-single" data-tableid="{$table_id}" data-relatedorderid="{$id}">
+				    <a class="" href="?page=takeorder&orderid={$id}">
 				    	<strong>{$table}</strong><span class="atk-cell"></span>
 				    </a>
 				  </li>
@@ -212,6 +212,10 @@ class page_takeorder extends Page {
 					'jslisteritemid'=>$this->js()->_selectorThis()->closest(".menuitem-single")->data('id'),
 					'jslisteritemqty'=>$this->js()->_selectorThis()->closest(".menuitem-single")->find('.orderqty')->val(),
 			]))->_selector('.menuitem-single .addto-order')->univ()->successMessage('added to order');
+
+		if($this->order_model['table_id']){
+			$this->js(true)->_selector('.runningtable-single[data-tableid="'.$this->order_model['table_id'].'"')->addClass('table-has-order');
+		}
 		// ->ajaxec(
 		// 	array($this->api->url('update'),
 		// 	'markreadyid'=>$this->js()->_selectorThis()->data('id'),
