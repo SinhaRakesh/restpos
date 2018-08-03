@@ -160,6 +160,11 @@ class page_takeorder extends Page {
 			$new_od_model->save();
 			$this->app->stickyForget('jslisteritemid');
 			$this->app->stickyForget('jslisteritemqty');
+
+			if($this->order_model['status'] != "Running"){
+				$this->order_model['status'] = "Running";
+				$this->order_model->save();
+			}
 			$this->order_model->reload();
 		}
 
