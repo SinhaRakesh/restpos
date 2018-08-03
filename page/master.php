@@ -68,7 +68,10 @@ class page_master extends Page {
 			$m->addCondition('menu_category_id',$id);
 			$crud = $page->add('CRUD',['entity_name'=>'Menu Items']);
 			$crud->setModel($m);
-
+			$crud->grid->addHook('formatRow',function($g){
+        		$g->current_row_html['image'] = '<img style="width:120px;" src="'.$g->model['image'].'"/>';
+        	});
+        	$crud->grid->addSno('sno');
 			// $crud->grid->add("View_Box",null,'right_panel')->set("List of ".$cat_model['name']);
 		});
 	}
@@ -93,6 +96,7 @@ class page_master extends Page {
 
 	function page_order(){
 		$order = $this->add('Model_Order');
+		$order->setOrder('id','desc');
 		// $order->addCondition('status','Draft');
 		// $order->addCondition('created_date_only',$this->app->today);
 
@@ -109,6 +113,8 @@ class page_master extends Page {
 			$crud = $page->add('CRUD');
 			$crud->setModel($m);
 		});
+
+		$crud->grid->addPaginator(50);
 	}
 
 	function page_printlayout(){

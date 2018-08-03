@@ -37,7 +37,7 @@ class Frontend extends ApiFrontend {
                 'Order'=>'index',
                 'Tables'=>'table',
                 'Menu'=>'menu',
-                'Staff'=>'staff',
+                // 'Staff'=>'staff',
                 'Reports'=>'report',
                 'Master'=>'master',
                 'Logout'=>'logout',

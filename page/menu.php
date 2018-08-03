@@ -18,7 +18,15 @@ class page_menu extends Page {
         	$item = $this->add('Model_MenuItem');
         	$item->addCondition('menu_category_id',$m->id);
         	$item->addCondition('is_active',true);
-        	$t->add('Grid')->setModel($item);
+        	$grid = $t->add('Grid');
+        	$grid->setModel($item,['image','name','code','price','unit']);
+        	// $grid->addFormatter('image','image');
+
+        	$grid->addHook('formatRow',function($g){
+        		$g->current_row_html['image'] = '<img style="width:120px;" src="'.$g->model['image'].'"/>';
+        	});
+        	$grid->addSno('sno');
+
 		}
 
 	}
