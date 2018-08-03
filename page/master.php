@@ -17,6 +17,7 @@ class page_master extends Page {
         $tab->addTabUrl('./customer','Customer');
         $tab->addTabUrl('./tax','Tax');
         $tab->addTabUrl('./order','Order');
+        $tab->addTabUrl('./printlayout','Print Layout');
 	}
 
 
@@ -110,4 +111,28 @@ class page_master extends Page {
 		});
 	}
 
+	function page_printlayout(){
+		$tab = $this->add('Tabs');
+		$bill_tab = $tab->addTab('Bill');
+		$kot_tab = $tab->addTab('KOT');
+		
+		$config = $this->add('Model_Configuration');
+		$config->tryLoadAny();
+
+		$form = $bill_tab->add('Form');
+		$form->setModel($config,['bill_master_layout','bill_detail_layout']);
+		$form->addSubmit();
+		if($form->isSubmitted()){
+			$form->save();
+			$form->js(null,$form->js()->reload())->univ()->successMessage('Bill format updated')->execute();
+		}
+
+		$form = $kot_tab->add('Form');
+		$form->setModel($config,['kot_master_layout','kot_detail_layout']);
+		$form->addSubmit();
+		if($form->isSubmitted()){
+			$form->save();
+			$form->js(null,$form->js()->reload())->univ()->successMessage('KOT format updated')->execute();
+		}
+	}
 }

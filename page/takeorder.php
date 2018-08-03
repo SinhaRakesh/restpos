@@ -175,8 +175,8 @@ class page_takeorder extends Page {
 				->set(function($page){
 					
 				});
-			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'kot','oid'=>$this->order_model->id]),'kot'.$this->order_model->id);
-			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'bill','oid'=>$this->order_model->id]).'bill'.$this->order_model->id);
+			$set->add('Button')->set('Print KOT')->addClass('atk-swatch-red')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'kot','orderid'=>$this->order_model->id,'cut_page'=>1]),'kot'.$this->order_model->id);
+			$set->add('Button')->set('Print Bill')->addClass('atk-swatch-blue')->setIcon('print')->js('click')->univ()->newWindow($this->app->url('print',['format'=>'bill','orderid'=>$this->order_model->id,'cut_page'=>1]),'bill'.$this->order_model->id);
 			// $crud->grid->addTotals(['qty','price']);
 		}
 
@@ -193,7 +193,7 @@ class page_takeorder extends Page {
 
 		$view_total = $crud->grid->add('View');
 		$view_total->addClass('fullwidth atk-align-right atk-text-bold atk-padding-small atk-swatch-yellow');
-		$view_total->setHtml('Total:&nbsp;<i class="icon-rupee"></i>'.$this->order_model['amount']);
+		$view_total->setHtml('Total:&nbsp;<i class="icon-rupee"></i>'.$this->order_model['net_amount']);
 
 		// $crud->grid->js('reload',$view_total->js()->reload());
 		// $view_pos->add('View')->set(rand(199,9999)." = item ".$this->itemid);
