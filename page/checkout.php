@@ -23,8 +23,8 @@ class page_checkout extends Page {
 		}
 
 		$col = $this->add('Columns');
-		$left_col = $col->addColumn('3');
-		$cen_col = $col->addColumn('4');
+		$left_col = $col->addColumn('4');
+		$cen_col = $col->addColumn('3');
 		$right_col = $col->addColumn('5');
 
 		// cen column
@@ -48,9 +48,36 @@ class page_checkout extends Page {
 		$form_layout = $discount_form->add('View', null, null,$form_gitemp);
 		$form_layout->addField('line','discount_coupon')->set($this->order_model['discount_coupon']);
 		$form_layout->addField('line','discount_amount')->set(($this->order_model['discount_coupon']?0:$this->order_model['discount_amount']));
-		$discount_form->addSubmit('Apply Discount');
+		$apply_discount = $discount_form->addSubmit('Apply Discount')->addClass('atk-swatch-green');
+		$clear_discount = $discount_form->addSubmit('Clear Discount')->addClass('atk-swatch-red');
 
 		if($discount_form->isSubmitted()){
+
+			if($discount_form->isClicked($clear_discount)){
+				$this->order_model['discount_coupon'] = "";
+				$this->order_model['discount_amount'] = 0;
+				$this->order_model->save();
+
+				if($discount_form['discount_coupon']){
+					$dc = $this->add('Model_DiscountCoupon');
+					$dc->addCondition('name',$discount_form['discount_coupon']);
+					$dc->tryLoadAny();
+
+					$used_model = $this->add('Model_DiscountCouponUsed');
+					$used_model->addCondition('order_id',$this->order_model->id);
+					$used_model->addCondition('discountcoupon_id',$dc->id);
+					$used_model->addCondition('customer_id',$this->order_model['customer_id']);
+					$used_model->tryLoadAny();
+					if($used_model->loaded()) $used_model->delete();
+				}
+				$this->order_model->reload();
+				$discount_form->js(null,[$discount_form->js()->reload(),$payment_view->js()->reload()])->univ()->successMessage('Discount Removed successfully')->execute();
+			}
+
+			if($this->order_model['status'] == "Paid"){
+				throw new \Exception("Order is paid, cannot applied Coupon on it.");
+			}
+
 			if(!$discount_form['discount_coupon'] AND !$discount_form['discount_amount']){
 				$discount_form->displayError('discount_coupon','either discount_coupon or discount_amount must not be empty')->execute();
 			}
@@ -58,7 +85,11 @@ class page_checkout extends Page {
 			$discount_amount = $discount_form['discount_amount'];
 
 			if($discount_form['discount_coupon']){
-				// todo
+				$data = $this->order_model->applyDiscountCoupon($discount_form['discount_coupon']);
+				if(!$data['result']){
+					$discount_form->displayError('discount_coupon',$data['message']);
+				}
+				$discount_amount = $data['discount_amount'];
 			}
 			
 			$this->order_model['discount_coupon'] = $discount_form['discount_coupon'];

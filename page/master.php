@@ -18,11 +18,14 @@ class page_master extends Page {
         $tab->addTabUrl('./tax','Tax');
         $tab->addTabUrl('./order','Order');
         $tab->addTabUrl('./printlayout','Print Layout');
+        $tab->addTabUrl('./discount','Discount Coupon');
 	}
 
 
 	function page_company(){
 		$model = $this->add('Model_Company');
+		$model->tryLoadAny();
+		
 		$form = $this->add('Form');
 		$form->setModel($model);
 		$form->addSubmit('Update');
@@ -140,5 +143,13 @@ class page_master extends Page {
 			$form->save();
 			$form->js(null,$form->js()->reload())->univ()->successMessage('KOT format updated')->execute();
 		}
+	}
+
+
+	function page_discount(){
+		$model = $this->add('Model_DiscountCoupon');
+		$crud = $this->add('CRUD');
+		$crud->setModel($model);
+
 	}
 }
