@@ -155,7 +155,7 @@ class page_master extends Page {
 		$crud->grid->addPaginator(50);
 
 		$crud->grid->add('VirtualPage')
-			->addColumn('used','Discount Coupon Used')
+			->addColumn('used')
 			->set(function($page){
 				$id = $_GET[$page->short_name.'_id'];
 

@@ -15,11 +15,16 @@ class Model_DiscountCoupon extends Model_Table{
 		$this->addField('created_at')->type('date')->defaultValue($this->app->today)->sortable(true)->system(true);
 		
 		$this->addField('discount_value')->hint('Discount Amount \ Percentage ie. type 100 or 10%');
-
-		$this->hasMany('DiscountVoucherUsed','discountcoupon_id');
-
 		$this->addField('status')->enum(['Active','InActive'])->defaultValue('Active');
+
+		$this->hasMany('DiscountCouponUsed','discountcoupon_id');
+
 		
+		$this->addExpression('coupon_used_count')->set(function($m,$q){
+			$used = $m->add('Model_DiscountCouponUsed');
+			$used->addCondition('discountcoupon_id',$m->getElement('id'));
+			return $used->count();
+		});
 		// $this->is([
 		// 		'name|to_trim|required',
 		// 		'start_date|required',
