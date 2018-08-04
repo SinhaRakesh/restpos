@@ -148,8 +148,24 @@ class page_master extends Page {
 
 	function page_discount(){
 		$model = $this->add('Model_DiscountCoupon');
+		$model->setOrder('id','desc');
+
 		$crud = $this->add('CRUD');
 		$crud->setModel($model);
+		$crud->grid->addPaginator(50);
+
+		$crud->grid->add('VirtualPage')
+			->addColumn('used','Discount Coupon Used')
+			->set(function($page){
+				$id = $_GET[$page->short_name.'_id'];
+
+				$m = $this->add('Model_DiscountCouponUsed');
+				$m->addCondition('discountcoupon_id',$id);
+				$crud = $page->add('CRUD',['allow_add'=>false,'allow_edit'=>false]);
+				$crud->setModel($m);
+				$crud->grid->addPaginator(10);
+				$crud->grid->removeColumn('discount_coupon');
+			});
 
 	}
 }
