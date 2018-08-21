@@ -369,3 +369,15 @@ tr.delivered{
 .btn-active{
   background: blue;
 }
+
+
+.btn-type-dinein.dine-in,
+.btn-type-take.take-away,
+.btn-type-delivery.delivery {
+  background:linear-gradient(to bottom, #03a9f4 0%, #2980b9 100%);
+  background:-ms-linear-gradient(top, #03a9f4 0%, #2980b9 100%);
+  background:-webkit-linear-gradient(top, #03a9f4 0%, #2980b9 100%);
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #03a9f4), color-stop(100%, #2980b9));
+  background:-moz-linear-gradient(top, #03a9f4 0%, #2980b9 100%); 
+  color: white;
+}

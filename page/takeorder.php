@@ -185,30 +185,39 @@ class page_takeorder extends Page {
 		
 		$this->view_pos = $view_pos = $this->add('View',null,'pos');
 
-		$type_set = $view_pos->add('ButtonSet')->addClass('fullwidth');
-		$dine_in_btn = $type_set->add('Button')->set('DINE IN');
+		$type_set = $view_pos->add('ButtonSet');
+		$dine_in_btn = $type_set->add('Button')->set('DINE IN')->addClass("btn-type-dinein ".strtolower($this->order_model['type']));
 		if($dine_in_btn->isClicked()){
 			$this->order_model['type'] = "dine-in";
 			$this->order_model->save();
 			$this->order_model->reload();
 			// $b->js('click')->effect('shake',['times'=>3],60,$b->js()->_enclose()->reload());
-			$dine_in_btn->js()->addClass('btn-active')->execute();
+			$type_set->js()->reload()->execute();
+			// $dine_in_btn->js()->addClass('btn-type-dinein dine-in')->execute();
 		}
-		$take_away_btn = $type_set->add('Button')->set('TAKE AWAY');
+		$take_away_btn = $type_set->add('Button')->set('TAKE AWAY')->addClass("btn-type-take ".strtolower($this->order_model['type']));
 		if($take_away_btn->isClicked()){
 			$this->order_model['type'] = "take-away";
 			$this->order_model->save();
 			$this->order_model->reload();
-			$take_away_btn->js()->addClass('btn-active')->execute();
+			$type_set->js()->reload()->execute();
+			// $take_away_btn->js()->addClass('btn-type-take take-away')->execute();
 		}
-		$delivery_away_btn = $type_set->add('Button')->set('DELIVERY');
+		$delivery_away_btn = $type_set->add('Button')->set('DELIVERY')->addClass("btn-type-delivery ".strtolower($this->order_model['type']));
 		if($delivery_away_btn->isClicked()){
 			$this->order_model['type'] = "delivery";
 			$this->order_model->save();
 			$this->order_model->reload();
-			$delivery_away_btn->js()->addClass('btn-active')->execute();
+			$type_set->js()->reload()->execute();
+			// $delivery_away_btn->js()->addClass('btn-type-delivery delivery')->execute();
 		}
-
+		$customer_btn = $type_set->add('Button')->set('Customer: '.$this->order_model['customer']." ".$this->order_model['customer_mobile'])->setIcon('user')->addClass('atk-swatch-green customer-info-btn');
+		$customer_btn->js('click')->univ()->frameURL('Customer Info',
+				$this->app->url(
+						$this->cstvp->getURL(),
+						['customerorderid'=>$this->order_model->id]
+					)
+			);
 
 		if($this->itemid){
 			$new_od_model = $this->add('Model_OrderDetail');
@@ -234,14 +243,6 @@ class page_takeorder extends Page {
 
 		// col2 detail
 		// if($this->order_model['customer_id']){
-			$customer_btn = $view_pos->add('Button')->set('Customer: '.$this->order_model['customer']." ".$this->order_model['customer_mobile'])->setIcon('user')->addClass('width80 atk-move-center atk-swatch-green customer-info-btn');
-			
-			$customer_btn->js('click')->univ()->frameURL('Customer Info',
-					$this->app->url(
-							$this->cstvp->getURL(),
-							['customerorderid'=>$this->order_model->id]
-						)
-				);
 		// }
 		$crud = $view_pos->add('CRUD',['entity_name'=>'Menu Item','allow_add'=>false]);
 		$crud->setModel($detail_model,['qty','narration'],['menu_item','qty','narration','amount']);

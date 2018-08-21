@@ -56,6 +56,7 @@ class page_checkout extends Page {
 			if($discount_form->isClicked($clear_discount)){
 				$this->order_model['discount_coupon'] = "";
 				$this->order_model['discount_amount'] = 0;
+				$this->order_model['discount_value'] = null;
 				$this->order_model->save();
 
 				if($discount_form['discount_coupon']){
