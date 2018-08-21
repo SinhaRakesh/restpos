@@ -14,6 +14,8 @@ class Model_Customer extends Model_Table{
 		$this->addField('state');
 		$this->addField('country');
 		$this->addField('is_active')->type('boolean')->defaultValue(true);
+		$this->addField('birthday')->type('date');
+		$this->addField('anniversary')->type('date');
 		
 		$this->add('dynamic_model/Controller_AutoCreator');
 

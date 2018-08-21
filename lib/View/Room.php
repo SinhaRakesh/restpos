@@ -70,20 +70,22 @@ class View_Room extends \CompleteLister {
 			->addContentSpot()
 			->makePanelsCoppalsible(true)
 			->layout([
-					'name~Full Name'=>'c1~4',
+					'mobile_no'=>'c1~4',
 					'email_id'=>'c2~4',
-					'mobile_no'=>'c3~4',
-					'address'=>'c4~3',
-					'city'=>'c5~3',
-					'state'=>'c6~3',
-					'country'=>'c7~3',
-					'FormButtons~&nbsp;'=>'c8~12'
+					'name~Name'=>'c3~4',
+					'country'=>'c4~4',
+					'state'=>'c5~4',
+					'city'=>'c6~4',
+					'birthday'=>'c7~4',
+					'anniversary'=>'c8~4',
+					'address'=>'c9~4',
+					'FormButtons~&nbsp;'=>'c10~12'
 			]);
 		
-		$form->setModel('Customer',['name','email_id','mobile_no','address','city','state','country']);
+		$form->setModel('Customer',['name','email_id','mobile_no','address','city','state','country','birthday','anniversary']);
 		$form->addField('hidden','table_id')->set($table_id);
 
-		$submit_button = $form->addSubmit('Save Customer And Take Order')->addClass('atk-swatch-blue');
+		$submit_button = $form->addSubmit('Save Customer And Take Order')->addClass('atk-swatch-blue ak-push')->setStyle('margin-right','10px');
 		$skip_button = $form->addSubmit('Skip Now and Take Order');
 		if($form->isSubmitted()){
 
@@ -98,6 +100,11 @@ class View_Room extends \CompleteLister {
 			}
 			
 			if($form->isClicked($submit_button)){
+				if(!$form['mobile_no']) $form->displayError('mobile_no','must not be empty');
+				if(!$form['name']) $form->displayError('name','must not be empty');
+				if(!$form['city']) $form->displayError('city','must not be empty');
+				if(!$form['birthday']) $form->displayError('birthday','must not be empty');
+								
 				//check mobile number already exist or not
 				if(trim($form['mobile_no'])){
 					$customer = $this->add('Model_Customer');

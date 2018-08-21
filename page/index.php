@@ -8,7 +8,7 @@ class page_index extends Page {
 
 		// $qsp_model->_dsql()->del('fields')->field('max(CAST('.$this->number_field.' AS decimal))')->where('type',$this['type'])->where('serial',$serial)->getOne() + 1 ;
 		$btn = $this->add('Button');
-		$btn->set('New Order')->addClass('fullwidth atk-button-large');
+		$btn->set('New Order')->addClass('width80 atk-button-large atk-move-center');
 		if($btn->isClicked()){
 			$order = $this->add('Model_Order');
 			$order['status'] = "Running";

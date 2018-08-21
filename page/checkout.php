@@ -47,7 +47,7 @@ class page_checkout extends Page {
 		$discount_form = $left_col->add('Form',null,null,['form/empty']);
 		$form_layout = $discount_form->add('View', null, null,$form_gitemp);
 		$form_layout->addField('line','discount_coupon')->set($this->order_model['discount_coupon']);
-		$form_layout->addField('line','discount_amount')->set(($this->order_model['discount_coupon']?0:$this->order_model['discount_amount']));
+		$form_layout->addField('line','discount_amount')->set(($this->order_model['discount_coupon']?0:$this->order_model['discount_value']));
 		$apply_discount = $discount_form->addSubmit('Apply Discount')->addClass('atk-swatch-green');
 		$clear_discount = $discount_form->addSubmit('Clear Discount')->addClass('atk-swatch-red');
 
@@ -83,6 +83,11 @@ class page_checkout extends Page {
 			}
 
 			$discount_amount = $discount_form['discount_amount'];
+			if(strpos($discount_amount,'%') !== false){
+				$discount_array = explode("%",$discount_amount);
+				$discount_percentage = trim($discount_array[0]);
+				$discount_amount = round((($this->order_model['gross_amount'] * $discount_percentage) / 100.00),2);
+			}
 
 			if($discount_form['discount_coupon']){
 				$data = $this->order_model->applyDiscountCoupon($discount_form['discount_coupon']);
@@ -90,9 +95,11 @@ class page_checkout extends Page {
 					$discount_form->displayError('discount_coupon',$data['message']);
 				}
 				$discount_amount = $data['discount_amount'];
+				$discount_form['discount_amount'] = Null;
 			}
 			
 			$this->order_model['discount_coupon'] = $discount_form['discount_coupon'];
+			$this->order_model['discount_value'] = $discount_form['discount_amount'];
 			$this->order_model['discount_amount'] = $discount_amount;
 			$this->order_model->save();
 

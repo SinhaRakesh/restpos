@@ -23,10 +23,13 @@ class Model_Order extends Model_Table{
 		$this->addField('status')->enum(['Running','Complete','Paid','Void'])->defaultValue('Running');
 		$this->addField('paid_at')->type('datetime')->system(true);
 		$this->addField('void_at')->type('datetime')->system(true);
-
 		$this->addField('discount_coupon');
+		$this->addField('discount_value');
 		$this->addField('discount_amount')->defaultValue(0);
+		$this->addField('type')->enum(['dine-in','take-away','delivery']);
 
+		$this->addExpression('table_space')->set($this->refSQL('table_id')->fieldQuery('room'));
+		$this->addExpression('customer_mobile')->set($this->refSQL('customer_id')->fieldQuery('mobile_no'));
 		$this->addExpression('created_date_only','DATE(created_at)');
 		$this->addExpression('created_time_only','TIME(created_at)');
 

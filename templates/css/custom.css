@@ -358,3 +358,14 @@ tr.delivered{
   color: white !important;
   margin-left: 5px;
 }
+
+.width80{
+  width:80%;
+}
+.width33{
+  width:33%;
+}
+
+.btn-active{
+  background: blue;
+}
