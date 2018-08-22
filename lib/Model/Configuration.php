@@ -12,6 +12,8 @@ class Model_Configuration extends Model_Table{
 		$this->addField('kot_master_layout')->type('text');
 		$this->addField('kot_detail_layout')->type('text');
 		
+		$this->addField('payment_medium')->type('text');
 		$this->add('dynamic_model/Controller_AutoCreator');
+
 	}
 }

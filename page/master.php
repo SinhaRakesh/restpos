@@ -19,8 +19,20 @@ class page_master extends Page {
         $tab->addTabUrl('./order','Order');
         $tab->addTabUrl('./printlayout','Print Layout');
         $tab->addTabUrl('./discount','Discount Coupon');
+        $tab->addTabUrl('./config','Configuration');
 	}
 
+	function page_config(){
+		$conf = $this->add('Model_Configuration');
+		$conf->tryLoadAny();
+		$form = $this->add('Form');
+		$form->setModel($conf);
+		$form->addSubmit('save');
+		if($form->isSubmitted()){
+			$form->save();
+			$form->js()->reload()->execute();
+		}	
+	}
 
 	function page_company(){
 		$model = $this->add('Model_Company');

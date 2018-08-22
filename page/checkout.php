@@ -23,9 +23,9 @@ class page_checkout extends Page {
 		}
 
 		$col = $this->add('Columns');
-		$left_col = $col->addColumn('4');
-		$cen_col = $col->addColumn('3');
-		$right_col = $col->addColumn('5');
+		$left_col = $col->addColumn('3');
+		$cen_col = $col->addColumn('5');
+		$right_col = $col->addColumn('4');
 
 		// cen column
 		$payment_view = $cen_col->add('View');
@@ -33,10 +33,19 @@ class page_checkout extends Page {
 		$payment_str .= '<table style="width:100%;">';
 		$payment_str .= '<tr style="border-bottom:1px solid #f3f3f3;"><td> Gross Amount: </td> <td align="right">'.$this->order_model['gross_amount']."</td></tr>";
 		$payment_str .= '<tr style="border-bottom:1px solid #f3f3f3;"><td> Discount Amount:</td> <td align="right">'.($this->order_model['discount_amount']?:0)."</td></tr>";
-		$payment_str .= '<tr><td> Net Amount: </td> <td align="right" class="atk-size-kilo atk-effect-danger"> '.$this->order_model['net_amount']."</td></tr>";
+		$payment_str .= '<tr style="border-bottom:1px solid #f3f3f3;"><td> Net Amount: </td> <td align="right" class="atk-size-kilo atk-effect-danger"> '.$this->order_model['net_amount']."</td></tr>";
+		$payment_str .= '<tr style="border-bottom:1px solid #f3f3f3;"><td> Received Amount: </td> <td align="right"> '.$this->order_model['received_amount']."</td></tr>";
+		$payment_str .= '<tr><td> Due Amount: </td> <td align="right" class="atk-size-kilo atk-effect-danger"> '.($this->order_model['net_amount']-$this->order_model['received_amount'])."</td></tr>";
 		$payment_str .= '</table>';
 		$payment_view->setHtml($payment_str);
 
+		$crud_model_tran = $this->add('Model_Transaction');
+		$crud_model_tran->addCondition('order_id',$this->order_model->id);
+		// if($crud_model_tran->count()->getOne()){
+		$crud = $cen_col->add('CRUD',['allow_add'=>false,'allow_edit'=>false]);
+		$crud->grid->add('View',null,'grid_buttons')->set('Payment Detail');
+		$crud->setModel($crud_model_tran,['payment_mode','amount']);
+		// }
 
 		// left column
 		$left_col->add('View')->set('Have a Discount Coupon ?')->addClass('atk-size-kilo');
@@ -48,8 +57,8 @@ class page_checkout extends Page {
 		$form_layout = $discount_form->add('View', null, null,$form_gitemp);
 		$form_layout->addField('line','discount_coupon')->set($this->order_model['discount_coupon']);
 		$form_layout->addField('line','discount_amount')->set(($this->order_model['discount_coupon']?0:$this->order_model['discount_value']));
-		$apply_discount = $discount_form->addSubmit('Apply Discount')->addClass('atk-swatch-green');
-		$clear_discount = $discount_form->addSubmit('Clear Discount')->addClass('atk-swatch-red');
+		$apply_discount = $discount_form->addSubmit('Apply')->addClass('atk-swatch-green');
+		$clear_discount = $discount_form->addSubmit('Clear')->addClass('atk-swatch-red');
 
 		if($discount_form->isSubmitted()){
 
@@ -114,15 +123,16 @@ class page_checkout extends Page {
 		$model_tran->getElement('discount_amount')->system(true);
 		$model_tran->getElement('discount_coupon')->system(true);
 
+
 		$form = $right_col->add('Form');
 		$form->setModel($model_tran);
-		$form->addSubmit('Paid And Print Bill')->addClass('atk-swatch-blue');
+		$form->addSubmit('Received')->addClass('atk-swatch-blue');
 		
 		$field_payment = $form->getElement('payment_mode');
 		$field_payment->js(true)->univ()->bindConditionalShow([
 			'Cash'=>['amount','narration'],
 			'Cheque'=>['cheque_no','cheque_date','amount','narration'],
-			'Other'=>['other_transaction_date','amount','narration']
+			'Other'=>['payment_medium','other_transaction_date','amount','narration']
 		],'div.atk-form-row');
 		// $grid = $right_col->add('Grid');
 		// $grid->setModel($model_tran);
@@ -135,20 +145,36 @@ class page_checkout extends Page {
 			}
 			// if(!$form['amount']) $form->displayError('amount','amount must not be empty');
 			
-			if($form['amount'] < $this->order_model['net_amount'])
-				$form->displayError('amount','must be equal to order net amount ( '.$this->order_model['net_amount'].' )');
-
+			// if($form['amount'] < $this->order_model['net_amount'])
+			// 	$form->displayError('amount','must be equal to order net amount ( '.$this->order_model['net_amount'].' )');
 
 			$form->save();
-			$this->order_model['status'] = "Paid";
-			$this->order_model->save();
+			// $this->order_model['status'] = "Paid";
+			// $this->order_model->save();
 
 			$js_array = [
-							$form->js()->univ()->newWindow($this->app->url('print',['format'=>'bill','orderid'=>$this->order_model->id,'cut_page'=>1]),'bill'.$this->order_model->id),
-							$this->app->redirect($this->app->url('takeorder',['order_id'=>$this->order_model->id]))
+							// $form->js()->univ()->newWindow($this->app->url('print',['format'=>'bill','orderid'=>$this->order_model->id,'cut_page'=>1]),'bill'.$this->order_model->id),
+							$right_col->js()->reload(),
+							$cen_col->js()->reload()
 						];
 
-			$form->js(null,$js_array)->univ()->successMessage('Order '.$this->order_model['name'].' Payment Received of amount '.$this->order_model['net_amount'])->execute();
+			$form->js(null,$js_array)->univ()->successMessage('Order '.$this->order_model['name'].' Payment Received of amount '.$form['amount'])->execute();
+		}
+
+		if($this->order_model['net_amount'] == $this->order_model['received_amount']){
+			$right_col->add('View')->setElement('hr');
+			$checkout_btn = $right_col->add('Button')->set('Checkout \ Settle');
+			if($checkout_btn->isClicked()){
+				$this->order_model->reload();
+				if($this->order_model['net_amount'] != $this->order_model['received_amount'])
+					$this->js()->univ()->errorMessage('First Received All Amount due amount is: '.($this->order_model['net_amount']-$this->order_model['received_amount']))->execute();
+
+				$this->order_model['status'] = "Paid";
+				$this->order_model->save();
+				
+				$this->js(null,$this->app->redirect($this->app->url('takeorder',['order_id'=>$this->order_model->id])))->univ()->successMessage('Order Paid/Settle successfully')->execute();
+			
+			}
 		}
 
 	}

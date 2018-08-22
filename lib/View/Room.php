@@ -89,22 +89,27 @@ class View_Room extends \CompleteLister {
 		$skip_button = $form->addSubmit('Skip Now and Take Order');
 		if($form->isSubmitted()){
 
-			$order_model = $this->add('Model_Order');
-			$order_model['table_id'] = $form['table_id'];
-			$order_model['created_at'] = $this->app->now;
-			$order_model['status'] = "Running";
-			$order_model->save();
+			if($form->isClicked($submit_button)){
+				if(!$form['mobile_no']) $form->displayError('mobile_no','must not be empty');
+				if(!$form['name']) $form->displayError('name','must not be empty');
+				if(!$form['city']) $form->displayError('city','must not be empty');
+				if(!$form['birthday']) $form->displayError('birthday','must not be empty');
+			}
+
+			if($form->isClicked($submit_button) OR $form->isClicked($skip_button)){
+				$order_model = $this->add('Model_Order');
+				$order_model->addCondition('table_id',$form['table_id']);
+				$order_model->addCondition('status','Running');
+				$order_model->tryLoadAny();
+				$order_model['created_at'] = $this->app->now;
+				$order_model->save();
+			}
 
 			if($form->isClicked($skip_button)){
 				$this->app->redirect($this->app->url('takeorder',['orderid'=>$order_model->id]));
 			}
 			
 			if($form->isClicked($submit_button)){
-				if(!$form['mobile_no']) $form->displayError('mobile_no','must not be empty');
-				if(!$form['name']) $form->displayError('name','must not be empty');
-				if(!$form['city']) $form->displayError('city','must not be empty');
-				if(!$form['birthday']) $form->displayError('birthday','must not be empty');
-								
 				//check mobile number already exist or not
 				if(trim($form['mobile_no'])){
 					$customer = $this->add('Model_Customer');
@@ -115,7 +120,6 @@ class View_Room extends \CompleteLister {
 						$customer = $form->save();
 					}
 				}
-
 				$this->app->redirect($this->app->url('takeorder',['orderid'=>$order_model->id]));
 			}
 		}

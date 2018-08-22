@@ -42,8 +42,13 @@ class Model_Order extends Model_Table{
 			return $q->expr("round(([0]-IFNULL([1],0)),2)", [$m->getElement('gross_amount'),$m->getElement('discount_amount')]);
 		});
 
+		$this->addExpression('received_amount')->set(function($m,$q){
+			return $q->expr("IFNULL([0],0)", [$m->refSQL('OrderTransaction')->sum('amount')]);
+		});
+		
 
 		$this->hasMany('OrderDetail','order_id',null,'OrderDetail');
+		$this->hasMany('Transaction','order_id',null,'OrderTransaction');
 		
 		$this->addHook('beforeSave',$this);
 		$this->add('dynamic_model/Controller_AutoCreator');

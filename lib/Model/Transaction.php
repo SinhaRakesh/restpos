@@ -11,6 +11,10 @@ class Model_Transaction extends Model_Table{
 		
 		$this->addField('created_at')->type('datetime')->defaultValue($this->app->now)->system(true);
 		$this->addField('payment_mode')->setValueList(['Cash'=>'Cash','Cheque'=>'Cheque','Other'=>'Other/ Online'])->defaultValue('Cash');
+
+		$conf = $this->add('Model_Configuration')->tryLoadAny();
+		$this->addField('payment_medium')->setValueList(explode(",",$conf['payment_medium']));
+
 		$this->addField('cheque_no')->type('Number')->defaultValue(0);
 		$this->addField('cheque_date')->type('datetime');
 		$this->addField('other_transaction_date')->type('date')->caption('Payment Date');
